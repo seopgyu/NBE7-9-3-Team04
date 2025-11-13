@@ -36,8 +36,8 @@ public class UserController {
 
         UserLoginResponse response = userService.login(request);
 
-        rq.setCookie("accessToken", response.accessToken(), (int) (jwtTokenProvider.getAccessTokenExpireTime()));
-        rq.setCookie("refreshToken", response.refreshToken(), (int) (jwtTokenProvider.getRefreshTokenExpireTime()));
+        rq.setCookie("accessToken", response.accessToken, (int) (jwtTokenProvider.getAccessTokenExpireTime()));
+        rq.setCookie("refreshToken", response.refreshToken, (int) (jwtTokenProvider.getRefreshTokenExpireTime()));
 
         return ApiResponse.ok(
                 "로그인을 성공했습니다.",
