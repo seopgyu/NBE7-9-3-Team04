@@ -1,14 +1,13 @@
-package com.backend.global.config;
+package com.backend.global.config
 
-import jakarta.annotation.PostConstruct;
-import org.springframework.context.annotation.Configuration;
-
-import java.util.TimeZone;
+import jakarta.annotation.PostConstruct
+import org.springframework.context.annotation.Configuration
+import java.util.*
 
 @Configuration
-public class WebConfig {
+class WebConfig {
     @PostConstruct
-    public void init(){
-        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+    fun init() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"))
     }
 }
