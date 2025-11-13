@@ -5,12 +5,10 @@ import com.backend.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Entity
 @Builder
 @Table(name = "users")
@@ -53,7 +51,6 @@ public class User extends BaseEntity {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Subscription subscription;
-
 
     public void assignSubscription(Subscription subscription) {
         this.subscription = subscription;
@@ -108,4 +105,50 @@ public class User extends BaseEntity {
     public void changePassword(String encodedPassword) {
         this.password = encodedPassword;
     }
+
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public String getGithub() {
+        return github;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public AccountStatus getAccountStatus() {
+        return accountStatus;
+    }
+
+    public int getAiQuestionUsedCount() {
+        return aiQuestionUsedCount;
+    }
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
 }

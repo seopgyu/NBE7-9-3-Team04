@@ -51,4 +51,18 @@ public class GlobalExceptionHandler {
                 ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+//    // JSON 요청 필드 누락 시 발생하는 예외 처리
+//    @ExceptionHandler(HttpMessageNotReadableException.class)
+//    public ResponseEntity<ApiResponse<?>> handleHttpMessageNotReadable(HttpMessageNotReadableException e) {
+//
+//        String message = "필수 요청 필드가 누락되었습니다."; // MethodArgumentNotValidException과 같은 메시지 형식
+//
+//        log.warn("HttpMessageNotReadableException {}", e.getMessage());
+//        return new ResponseEntity<>(
+//                ApiResponse.fail(HttpStatus.BAD_REQUEST, message),
+//                HttpStatus.BAD_REQUEST
+//        );
+//    }
+
 }
