@@ -43,7 +43,7 @@ class AnswerController(
         @PathVariable answerId: Long,
         @RequestBody @Valid reqBody: AnswerUpdateRequest
     ): ApiResponse<AnswerUpdateResponse> {
-        val currentUser: User = rq.user
+        val currentUser: User = rq.getUser()
         val updatedAnswer: Answer = answerService.updateAnswer(currentUser, answerId, reqBody)
 
         return ApiResponse.ok(
@@ -58,7 +58,7 @@ class AnswerController(
     fun deleteAnswer(
         @PathVariable answerId: Long
     ): ApiResponse<Void?> {
-        val currentUser: User = rq.user
+        val currentUser: User = rq.getUser()
         answerService.deleteAnswer(currentUser, answerId)
 
         return ApiResponse.ok(

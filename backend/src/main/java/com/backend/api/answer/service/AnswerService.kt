@@ -82,8 +82,8 @@ class AnswerService(
         answerRepository.delete(answer)
     }
 
-    fun findAnswersByQuestionId(page: Int, questionId: Long): AnswerPageResponse<AnswerReadWithScoreResponse> {
-        var page = page
+    fun findAnswersByQuestionId(pageArg: Int, questionId: Long): AnswerPageResponse<AnswerReadWithScoreResponse> {
+        var page = pageArg
         questionService.findByIdOrThrow(questionId)
 
         if (page < 1) page = 1
@@ -104,7 +104,7 @@ class AnswerService(
         // 질문 존재 여부 확인
         questionService.findByIdOrThrow(questionId)
 
-        val currentUser = rq.user
+        val currentUser = rq.getUser()
 
         // 질문에 대해 현재 사용자가 작성한 답변 조회
         return answerRepository.findFirstByQuestionIdAndAuthorId(questionId, currentUser.id!!)
@@ -112,10 +112,10 @@ class AnswerService(
             .orElse(null) // 없으면 null 반환
     }
 
-    fun findAnswersByUserId(page: Int, userId: Long): AnswerPageResponse<AnswerMypageResponse> {
-        var page = page
+    fun findAnswersByUserId(pageArg: Int, userId: Long): AnswerPageResponse<AnswerMypageResponse> {
+        var page = pageArg
         userService.getUser(userId)
-        val currentUser = rq.user
+        val currentUser = rq.getUser()
         if (currentUser.id != userId && currentUser.role != Role.ADMIN) {
             throw ErrorException(ErrorCode.ANSWER_INVALID_USER)
         }
