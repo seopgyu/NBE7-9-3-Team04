@@ -6,8 +6,6 @@ import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import jakarta.annotation.PostConstruct
-import lombok.Getter
-import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -18,8 +16,6 @@ import javax.crypto.SecretKey
 
 //JWT 핵심 유틸 클래스
 @Component
-@RequiredArgsConstructor
-@Getter
 class JwtTokenProvider(
     private val customUserDetailsService: CustomUserDetailsService,
 
@@ -82,8 +78,7 @@ class JwtTokenProvider(
 
 
     fun getIdFromToken(token: String): Long? =
-        parseClaims(token)["userId"]
-            ?.let { it.toString().toLong() }
+        parseClaims(token)["userId"]?.toString()?.toLong()
 
 
     fun getRoleFromToken(token: String): Role =
