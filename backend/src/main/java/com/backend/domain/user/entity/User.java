@@ -47,6 +47,7 @@ public class User extends BaseEntity {
     private AccountStatus accountStatus = AccountStatus.ACTIVE; // 기본값 ACTIVE
 
     @Column(nullable = false)
+    @Builder.Default
     private int aiQuestionUsedCount = 0; // AI 질문 사용 횟수
 
 

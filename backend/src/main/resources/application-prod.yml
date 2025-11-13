@@ -1,0 +1,15 @@
+logging:
+  discord:
+    webhook-url: ${DISCORD_WEBHOOK_URL}
+  config: classpath:logback.xml
+
+spring:
+  elasticsearch:
+    uris: http://localhost:9200 # Elastic 노드 주소
+    # username: elastic # 보안 해제 시 불필요
+    # password: changeme # 보안 해제 시 불필요
+
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
