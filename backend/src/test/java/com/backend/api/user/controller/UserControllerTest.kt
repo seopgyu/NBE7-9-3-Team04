@@ -103,7 +103,7 @@ class UserControllerTest : JwtTest() {
             )
 
             // then
-            val user = userRepository.findByEmail(request.email).orElseThrow()
+            val user = userRepository.findByEmail(request.email)
 
             resultActions
                 .andExpect(handler().handlerType(UserController::class.java))
@@ -203,7 +203,7 @@ class UserControllerTest : JwtTest() {
         @DisplayName("정상 작동 - 토큰 설정 확인")
         fun success() {
             val request = UserLoginRequest(
-                mockUser.getEmail(),
+                mockUser.email,
                 "test1234"
             )
 
@@ -252,7 +252,7 @@ class UserControllerTest : JwtTest() {
         @DisplayName("비밀번호 불일치")
         fun fail2() {
             val request = UserLoginRequest(
-                mockUser.getEmail(),
+                mockUser.email,
                 "wrong1234"
             )
 
@@ -305,9 +305,9 @@ class UserControllerTest : JwtTest() {
         @DisplayName("토큰 갱신 정상 작동")
         fun success() {
             val refreshToken = jwtTokenProvider.generateRefreshToken(
-                mockUser.getId(),
-                mockUser.getEmail(),
-                mockUser.getRole()
+                mockUser.id,
+                mockUser.email,
+                mockUser.role
             )
 
 
