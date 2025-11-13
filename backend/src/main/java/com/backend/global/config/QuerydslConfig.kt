@@ -1,21 +1,16 @@
-package com.backend.global.config;
+package com.backend.global.config
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import com.querydsl.jpa.impl.JPAQueryFactory
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
 @Configuration
-@RequiredArgsConstructor
-public class QuerydslConfig {
-
+class QuerydslConfig(
     @PersistenceContext
-    private final EntityManager em;
-
+    private val em: EntityManager
+) {
     @Bean
-    public JPAQueryFactory queryFactory(){
-        return new JPAQueryFactory(em);
-    }
+    fun queryFactory(): JPAQueryFactory = JPAQueryFactory(em)
 }
