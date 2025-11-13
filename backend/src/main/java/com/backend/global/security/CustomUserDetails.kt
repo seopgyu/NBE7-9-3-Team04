@@ -1,13 +1,11 @@
 package com.backend.global.security
 
 import com.backend.domain.user.entity.User
-import lombok.Getter
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 //User를 Security 인증 객체로 변환
-@Getter
 class CustomUserDetails(
     val user: User
 ) : UserDetails {
