@@ -15,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/questions")
@@ -38,7 +36,7 @@ public class AnswerController {
 
         return ApiResponse.created(
                 "%d번 답변이 생성되었습니다.".formatted(newAnswer.getId()),
-                new AnswerCreateResponse(newAnswer)
+                AnswerCreateResponse.from(newAnswer)
         );
     }
 
@@ -58,7 +56,7 @@ public class AnswerController {
 
         return ApiResponse.ok(
                 "%d번 답변이 수정되었습니다.".formatted(updatedAnswer.getId()),
-                new AnswerUpdateResponse(updatedAnswer)
+                AnswerUpdateResponse.from(updatedAnswer)
         );
     }
 

@@ -88,95 +88,97 @@ public class AnswerControllerTest extends JwtTest {
         questionRepository.save(question1);
         questionId = question1.getId();
 
-        Answer answer1 = Answer.builder()
-                .content("첫 번째 답변 내용")
-                .isPublic(true)
-                .author(mockUser)
-                .question(question1)
-                .build();
+        Answer answer1 = new Answer(
+                "첫 번째 답변 내용",
+                true,
+                mockUser,
+                question1
+        );
 
-        Answer answer2 = Answer.builder()
-                .content("두 번째 답변 내용")
-                .isPublic(false)
-                .author(userRepository.findById(userIdList.get(0)).orElseThrow())
-                .question(question1)
-                .build();
+        Answer answer2 = new Answer(
+                "두 번째 답변 내용",
+                false,
+                userRepository.findById(userIdList.get(0)).orElseThrow(),
+                question1
+        );
 
-        Answer answer3 = Answer.builder()
-                .content("세 번째 답변 내용")
-                .isPublic(true)
-                .author(userRepository.findById(userIdList.get(0)).orElseThrow())
-                .question(question1)
-                .build();
+        Answer answer3 = new Answer(
+                "세 번째 답변 내용",
+                true,
+                userRepository.findById(userIdList.get(0)).orElseThrow(),
+                question1
+        );
 
-        Answer answer4 = Answer.builder()
-                .content("네 번째 답변 내용")
-                .isPublic(true)
-                .author(mockUser)
-                .question(question1)
-                .build();
+        Answer answer4 = new Answer(
+                "네 번째 답변 내용",
+                true,
+                mockUser,
+                question1
+        );
 
-        Answer answer5 = Answer.builder()
-                .content("다섯 번째 답변 내용")
-                .isPublic(true)
-                .author(mockUser)
-                .question(question1)
-                .build();
+        Answer answer5 = new Answer(
+                "다섯 번째 답변 내용",
+                true,
+                mockUser,
+                question1
+        );
 
-        Answer answer6 = Answer.builder()
-                .content("여섯 번째 답변 내용")
-                .isPublic(true)
-                .author(mockUser)
-                .question(question1)
-                .build();
+        Answer answer6 = new Answer(
+                "여섯 번째 답변 내용",
+                true,
+                mockUser,
+                question1
+        );
 
-        Answer answer7 = Answer.builder()
-                .content("일곱 번째 답변 내용")
-                .isPublic(true)
-                .author(mockUser)
-                .question(question1)
-                .build();
+        Answer answer7 = new Answer(
+                "일곱 번째 답변 내용",
+                true,
+                mockUser,
+                question1
+        );
 
-        Answer answer8 = Answer.builder()
-                .content("여덟 번째 답변 내용")
-                .isPublic(true)
-                .author(mockUser)
-                .question(question1)
-                .build();
-        Answer answer9 = Answer.builder()
-                .content("아홉 번째 답변 내용")
-                .isPublic(true)
-                .author(mockUser)
-                .question(question1)
-                .build();
+        Answer answer8 = new Answer(
+                "여덟 번째 답변 내용",
+                true,
+                mockUser,
+                question1
+        );
 
-        Answer answer10 = Answer.builder()
-                .content("열 번째 답변 내용")
-                .isPublic(true)
-                .author(mockUser)
-                .question(question1)
-                .build();
+        Answer answer9 = new Answer(
+                "아홉 번째 답변 내용",
+                true,
+                mockUser,
+                question1
+        );
 
-        Answer answer11 = Answer.builder()
-                .content("열한 번째 답변 내용")
-                .isPublic(true)
-                .author(mockUser)
-                .question(question1)
-                .build();
+        Answer answer10 = new Answer(
+                "열 번째 답변 내용",
+                true,
+                mockUser,
+                question1
+        );
 
-        Answer answer12 = Answer.builder()
-                .content("열두 번째 답변 내용")
-                .isPublic(true)
-                .author(mockUser)
-                .question(question1)
-                .build();
+        Answer answer11 = new Answer(
+                "열한 번째 답변 내용",
+                true,
+                mockUser,
+                question1
+        );
 
-        Answer answer13 = Answer.builder()
-                .content("열세 번째 답변 내용")
-                .isPublic(true)
-                .author(userRepository.findById(userIdList.get(0)).orElseThrow())
-                .question(question1)
-                .build();
+        Answer answer12 = new Answer(
+                "열두 번째 답변 내용",
+                true,
+                mockUser,
+                question1
+        );
+
+        Answer answer13 = new Answer(
+                "열세 번째 답변 내용",
+                true,
+                userRepository.findById(userIdList.get(0)).orElseThrow(),
+                question1
+        );
+
 
         answerRepository.save(answer1);
         answerRepository.save(answer2);
