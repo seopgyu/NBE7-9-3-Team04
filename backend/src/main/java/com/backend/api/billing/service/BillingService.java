@@ -68,7 +68,7 @@ public class BillingService {
         Subscription subscription = subscriptionService.getSubscriptionByCustomerKey(request.customerKey());
         autoPayment(subscription);
 
-        return new BillingResponse(billingKey, updated.customerKey);
+        return new BillingResponse(billingKey, updated.customerKey());
     }
 
     //자동 결제. 한달 주기로 결제 진행
@@ -81,7 +81,7 @@ public class BillingService {
             throw new ErrorException(ErrorCode.BILLING_KEY_NOT_FOUND);
         }
 
-        if (!subscription.isActive()) {
+        if (!subscription.getActive()) {
             throw new ErrorException(ErrorCode.SUBSCRIPTION_INACTIVE);
         }
 

@@ -89,7 +89,7 @@ class UserService(
             user = user,
             subscriptionType = SubscriptionType.BASIC,
             subscriptionName = "BASIC",
-            isActive = false,
+            active = false,
             price = 0L,
             questionLimit = 5, // 무료 사용자는 질문 제한 5회
             startDate = LocalDateTime.now(),

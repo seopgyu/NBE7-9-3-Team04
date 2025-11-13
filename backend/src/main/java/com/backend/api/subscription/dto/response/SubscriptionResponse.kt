@@ -48,7 +48,7 @@ data class SubscriptionResponse(
                 subscription.id,
                 subscription.subscriptionName,
                 subscription.subscriptionType.name,
-                subscription.isActive,
+                subscription.active,
                 subscription.price,
                 subscription.startDate,
                 subscription.endDate,

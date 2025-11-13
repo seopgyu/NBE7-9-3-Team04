@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDate
 
 interface SubscriptionRepository : JpaRepository<Subscription, Long> {
-    fun existsByUserAndIsActiveTrue(user: User): Boolean
+    fun existsByUserAndActiveTrue(user: User): Boolean
     fun findByCustomerKey(customerKey: String): Subscription?
     fun findByUser(user: User): Subscription?
 
     //fetch Join 사용
     @EntityGraph(attributePaths = ["user"])
-    fun findByNextBillingDateAndIsActive(nextBillingDate: LocalDate, isActive: Boolean): List<Subscription>
+    fun findByNextBillingDateAndActive(nextBillingDate: LocalDate, active: Boolean): List<Subscription>
 }

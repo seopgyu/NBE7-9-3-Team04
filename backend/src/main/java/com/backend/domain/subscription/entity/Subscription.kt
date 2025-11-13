@@ -3,19 +3,11 @@ package com.backend.domain.subscription.entity
 import com.backend.domain.user.entity.User
 import com.backend.global.entity.BaseEntity
 import jakarta.persistence.*
-import lombok.AllArgsConstructor
-import lombok.Builder
-import lombok.Getter
-import lombok.NoArgsConstructor
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
-@NoArgsConstructor
-@Getter
 @Entity
-@Builder
-@AllArgsConstructor
 class Subscription(
 
     @Enumerated(EnumType.STRING)
@@ -23,7 +15,7 @@ class Subscription(
     var subscriptionType: SubscriptionType,
 
     @Column(nullable = false)
-    var isActive: Boolean = false,
+    var active: Boolean = false,
 
     @Column(nullable = false)
     var startDate: LocalDateTime,
@@ -62,7 +54,7 @@ class Subscription(
 
     fun activatePremium(billingKey: String) {
         this.billingKey = billingKey
-        this.isActive = true
+        this.active = true
         this.subscriptionType = SubscriptionType.PREMIUM
         this.subscriptionName = "PREMIUM"
         this.price = 9900L
@@ -74,7 +66,7 @@ class Subscription(
 
     fun deActivatePremium() {
         this.billingKey = null
-        this.isActive = false
+        this.active = false
         this.subscriptionType = SubscriptionType.BASIC
         this.subscriptionName = "BASIC"
         this.price = 0L
@@ -97,7 +89,7 @@ class Subscription(
 
     fun isValid(): Boolean =
         subscriptionType == SubscriptionType.PREMIUM &&
-                isActive &&
+                active &&
                 endDate?.isAfter(LocalDateTime.now()) == true
 
     //TODO 임시 빌더 제거
