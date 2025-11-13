@@ -31,14 +31,14 @@ class Rq(
 
     fun setCookie(name: String, value: String?, maxAge: Int) {
 
-        val value = value ?: ""
+        val safeValue = value ?: ""
 
-        val cookie = Cookie(name, value).apply{
+        val cookie = Cookie(name, safeValue).apply{
             path = "/"
             isHttpOnly = true
             domain = "localhost"
             secure = true
-            this.maxAge = if(value.isBlank()) 0 else maxAge
+            this.maxAge = if(safeValue.isBlank()) 0 else maxAge
             setAttribute("SameSite", "None")
         }
 
