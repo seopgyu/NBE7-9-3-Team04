@@ -23,6 +23,18 @@ public abstract class BaseEntity {
     @Setter(AccessLevel.PROTECTED)
     private Long id;
 
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
+    public LocalDateTime getModifyDate() {
+        return modifyDate;
+    }
+
     @CreatedDate
     private LocalDateTime createDate;
 
