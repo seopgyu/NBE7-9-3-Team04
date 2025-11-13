@@ -27,16 +27,14 @@ import org.springframework.transaction.annotation.Transactional
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class AnswerControllerTest : JwtTest() {
-
+class AnswerControllerTest(
     @Autowired
-    private lateinit var mvc: MockMvc
-
+    val mvc: MockMvc,
     @Autowired
-    private lateinit var questionRepository: QuestionRepository
-
+    val questionRepository: QuestionRepository,
     @Autowired
-    private lateinit var answerRepository: AnswerRepository
+    val answerRepository: AnswerRepository
+) : JwtTest() {
 
     private var questionId: Long = 0
     private var answerIdList: List<Long> = emptyList()
