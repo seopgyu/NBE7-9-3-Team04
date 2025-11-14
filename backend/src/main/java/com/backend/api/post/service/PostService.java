@@ -47,7 +47,7 @@ public class PostService {
             throw new ErrorException(ErrorCode.ACCOUNT_SUSPENDED);
         }
 
-        if(request.pinStatus() == PinStatus.PINNED && !subscriptionRepository.existsByUserAndIsActiveTrue(user)) {
+        if(request.pinStatus() == PinStatus.PINNED && !subscriptionRepository.existsByUserAndActiveTrue(user)) {
             throw new ErrorException(ErrorCode.PIN_POST_FORBIDDEN);
         }
 

@@ -136,7 +136,7 @@ class EmailService(
 
         // 정지/영구정지는 패널티 필수
         if ((status == AccountStatus.SUSPENDED || status == AccountStatus.BANNED) && penalty == null) {
-            log.error("패널티가 있어야 하는 상태인데 penalty=null | user={}", user.getEmail())
+            log.error("패널티가 있어야 하는 상태인데 penalty=null | user={}", user.email)
             return
         }
 
@@ -144,7 +144,7 @@ class EmailService(
 
             AccountStatus.SUSPENDED -> {
                 "[Dev-Station] 계정 일시정지 안내" to """
-                안녕하세요, ${user.getName()}님.
+                안녕하세요, ${user.name}님.
                 
                 회원님의 계정이 일시정지되었습니다.
                 사유: ${penalty!!.reason}
@@ -154,7 +154,7 @@ class EmailService(
 
             AccountStatus.BANNED -> {
                 "[Dev-Station] 계정 영구 정지 안내" to """
-                안녕하세요, ${user.getName()}님.
+                안녕하세요, ${user.name}님.
                 
                 회원님의 계정이 영구 정지되었습니다.
                 사유: ${penalty!!.reason}
@@ -163,7 +163,7 @@ class EmailService(
 
             AccountStatus.ACTIVE -> {
                 "[Dev-Station] 계정 복구 안내" to """
-                안녕하세요, ${user.getName()}님.
+                안녕하세요, ${user.name}님.
                 
                 회원님의 계정이 복구되었습니다.
             """.trimIndent()
@@ -171,18 +171,17 @@ class EmailService(
 
             AccountStatus.DEACTIVATED -> {
                 "[Dev-Station] 탈퇴 완료 안내" to """
-                안녕하세요, ${user.getName()}님.
+                안녕하세요, ${user.name}님.
                 
                 회원님의 계정 탈퇴 처리가 완료되었습니다.
             """.trimIndent()
             }
 
-            else -> return
         }
 
         // 메일 발송
         val message = SimpleMailMessage().apply {
-            setTo(user.getEmail())
+            setTo(user.email)
             this.subject = subject
             text = content
         }

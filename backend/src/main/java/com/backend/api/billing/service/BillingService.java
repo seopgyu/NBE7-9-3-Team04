@@ -81,7 +81,7 @@ public class BillingService {
             throw new ErrorException(ErrorCode.BILLING_KEY_NOT_FOUND);
         }
 
-        if (!subscription.isActive()) {
+        if (!subscription.getActive()) {
             throw new ErrorException(ErrorCode.SUBSCRIPTION_INACTIVE);
         }
 
