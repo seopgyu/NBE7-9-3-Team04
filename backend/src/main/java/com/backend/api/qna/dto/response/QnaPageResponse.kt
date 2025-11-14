@@ -6,19 +6,19 @@ import org.springframework.data.domain.Page
 
 data class QnaPageResponse<T>(
 
-    @Schema(description = "Qna 응답DTO 리스트")
+    @field:Schema(description = "Qna 응답DTO 리스트")
     val qna: List<T>,
 
-    @Schema(description = "현재 페이지 번호", example = "3")
+    @field:Schema(description = "현재 페이지 번호", example = "3")
     val currentPage: Int,
 
-    @Schema(description = "전체 페이지 수", example = "10")
+    @field:Schema(description = "전체 페이지 수", example = "10")
     val totalPages: Int,
 
-    @Schema(description = "전체 Qna 수", example = "95")
+    @field:Schema(description = "전체 Qna 수", example = "95")
     val totalCount: Int,
 
-    @Schema(description = "페이지당 Qna 수", example = "10")
+    @field:Schema(description = "페이지당 Qna 수", example = "10")
     val pageSize: Int
 ) {
     companion object {
