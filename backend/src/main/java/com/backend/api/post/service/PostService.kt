@@ -46,7 +46,6 @@ class PostService(
 
         validateDeadline(request.deadline)
 
-        // 2. 'Post.builder()'로 companion object 팩토리 메서드 호출
         val post = Post.builder()
             .title(request.title)
             .introduction(request.introduction)
@@ -64,11 +63,9 @@ class PostService(
         return PostResponse.from(savedPost, false)
     }
 
-    // getPost의 user는 nullable
     fun getPost(postId: Long, user: User?): PostResponse {
         val post = findPostByIdOrThrow(postId)
 
-        // 5. 'getId()' 대신 'id' 프로퍼티 접근
         val isMine = user != null && post.users.id == user.id
 
         return PostResponse.from(post, isMine)
@@ -106,7 +103,7 @@ class PostService(
         val post = findPostByIdOrThrow(postId)
         validatePostOwner(post, user)
 
-        validateDeadline(request.deadline) // (PostUpdateRequest가 data class/JvmRecord라고 가정)
+        validateDeadline(request.deadline)
 
         post.updatePost(
             request.title,

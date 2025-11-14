@@ -20,8 +20,6 @@ class PostController(
     private val rq: Rq
 ) {
 
-    // 2. 'Member' 예시 스타일 적용 (Helper Property)
-    // 'rq'가 non-null이므로 '!!' 제거
     private val currentUser: User
         get() = rq.getUser()
 
