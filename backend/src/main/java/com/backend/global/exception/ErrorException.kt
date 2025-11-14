@@ -1,18 +1,14 @@
-package com.backend.global.exception;
+package com.backend.global.exception
 
-import lombok.Getter;
 
-@Getter
-public class ErrorException extends RuntimeException{
-    private final ErrorCode errorCode;
+class ErrorException : RuntimeException {
+    val errorCode: ErrorCode
 
-    public ErrorException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
-        this.errorCode = errorCode;
+    constructor(errorCode: ErrorCode) : super(errorCode.message) {
+        this.errorCode = errorCode
     }
 
-    public ErrorException(String message, ErrorCode errorCode) {
-        super(message);
-        this.errorCode = errorCode;
+    constructor(message: String, errorCode: ErrorCode) : super(message) {
+        this.errorCode = errorCode
     }
 }
