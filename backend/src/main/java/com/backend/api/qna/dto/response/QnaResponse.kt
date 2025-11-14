@@ -32,10 +32,10 @@ data class QnaResponse(
     val categoryName: String?,
 
     @field:Schema(description = "작성일", example = "2025-10-13T11:00:00")
-    val createdDate: LocalDateTime,
+    val createdDate: LocalDateTime?,
 
     @field:Schema(description = "수정일", example = "2025-10-13T12:00:00")
-    val modifiedDate: LocalDateTime,
+    val modifiedDate: LocalDateTime?,
 
     @field:Schema(
         description = "관리자 답변 내용",
@@ -46,6 +46,7 @@ data class QnaResponse(
     @field:Schema(description = "관리자 답변 여부", example = "false")
     val isAnswered: Boolean
 ) {
+    //TODO 더블뱅 제거
     companion object {
         fun from(qna: Qna): QnaResponse {
             return QnaResponse(

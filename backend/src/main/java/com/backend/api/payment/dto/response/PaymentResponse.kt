@@ -31,7 +31,7 @@ data class PaymentResponse(
     val status: PaymentStatus,
 
     @field:Schema(description = "결제 요청 시간", example = "2025-10-13T11:00:00")
-    val requestedAt: LocalDateTime,
+    val requestedAt: LocalDateTime?,
 
     @field:Schema(description = "결제 수정 시간", example = "2025-10-13T12:00:00")
     val approvedAt: LocalDateTime?,
@@ -42,11 +42,12 @@ data class PaymentResponse(
     @field:Schema(description = "사용자 이메일", example = "test@naver.com")
     val userEmail: String?
 ) {
+    //TODO 더블뱅 제거 필요
     companion object {
         @JvmStatic
         fun from(payment: Payment): PaymentResponse {
             return PaymentResponse(
-                payment.id,
+                payment.id!!,
                 payment.orderId,
                 payment.paymentKey,
                 payment.orderName,

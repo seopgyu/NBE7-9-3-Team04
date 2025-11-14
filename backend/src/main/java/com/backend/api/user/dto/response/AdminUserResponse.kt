@@ -18,11 +18,13 @@ data class AdminUserResponse(
     val role: Role,
     val accountStatus: AccountStatus
 ) {
+
+    //TODO 더블뱅 제거
     companion object {
         @JvmStatic
         fun from(user: User): AdminUserResponse {
             return AdminUserResponse(
-                user.id,
+                user.id!!,
                 user.email,
                 user.name,
                 user.nickname,
