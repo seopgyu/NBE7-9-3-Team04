@@ -18,9 +18,8 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -45,7 +44,6 @@ class BillingControllerTest {
 
     @Autowired
     lateinit var subscriptionRepository: SubscriptionRepository
-
 
     @MockBean
     lateinit var rq: Rq
@@ -97,7 +95,7 @@ class BillingControllerTest {
 
             //when
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/billing/confirm")
+                post("/api/v1/billing/confirm")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(invalidRequest))
@@ -111,7 +109,7 @@ class BillingControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.message").value("CUSTOMER_KEY가 누락되었거나 유효하지 않습니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
 
         @Test
@@ -123,7 +121,7 @@ class BillingControllerTest {
 
             //when
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/billing/confirm")
+                post("/api/v1/billing/confirm")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(invalidRequest))
@@ -137,7 +135,7 @@ class BillingControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.message").value("AUTH_KEY가 누락되었거나 유효하지 않습니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
     }
 }

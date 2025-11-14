@@ -21,11 +21,9 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -130,7 +128,7 @@ class SubscriptionControllerTest {
 
             //when
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/v1/subscriptions/me")
+                get("/api/v1/subscriptions/me")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
 
@@ -150,7 +148,7 @@ class SubscriptionControllerTest {
                 .andExpect(jsonPath("$.data.price").value(9900))
                 .andExpect(jsonPath("$.data.customerKey").value("customerKey123"))
                 .andExpect(jsonPath("$.data.billingKey").value("billingKey123"))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
 
         @Test
@@ -179,7 +177,7 @@ class SubscriptionControllerTest {
 
             //when
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/v1/subscriptions/me")
+                get("/api/v1/subscriptions/me")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
 
@@ -192,7 +190,7 @@ class SubscriptionControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.message").value("해당 고객의 구독 정보를 찾을 수 없습니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
     }
 
@@ -210,7 +208,7 @@ class SubscriptionControllerTest {
 
             //when
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.delete(
+                delete(
                     "/api/v1/subscriptions/cancel/{customerKey}",
                     activeSubscription.customerKey
                 )
@@ -226,7 +224,7 @@ class SubscriptionControllerTest {
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.message").value("구독이 성공적으로 취소되었습니다."))
                 .andExpect(jsonPath("$.data.customerKey").value(activeSubscription.customerKey))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
 
             val updated= subscriptionRepository.findByCustomerKey(activeSubscription.customerKey!!)
 
@@ -243,7 +241,7 @@ class SubscriptionControllerTest {
 
             //when
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.delete(
+                delete(
                     "/api/v1/subscriptions/cancel/{customerKey}",
                     deactiveSubscription.customerKey
                 )
@@ -258,7 +256,7 @@ class SubscriptionControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.message").value("비활성화된 구독입니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
 
         @Test
@@ -271,7 +269,7 @@ class SubscriptionControllerTest {
 
             //when
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.delete("/api/v1/subscriptions/cancel/{customerKey}", "invalid_key")
+                delete("/api/v1/subscriptions/cancel/{customerKey}", "invalid_key")
                     .accept(MediaType.APPLICATION_JSON)
 
             )
@@ -283,7 +281,7 @@ class SubscriptionControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.message").value("해당 고객의 구독 정보를 찾을 수 없습니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
     }
 }

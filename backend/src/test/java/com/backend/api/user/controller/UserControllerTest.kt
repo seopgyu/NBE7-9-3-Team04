@@ -25,8 +25,9 @@ import org.springframework.http.MediaType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -97,7 +98,7 @@ class UserControllerTest : JwtTest() {
 
             // when
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/users/signup")
+                post("/api/v1/users/signup")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request))
             )
@@ -113,7 +114,7 @@ class UserControllerTest : JwtTest() {
                 .andExpect(jsonPath("$.message").value("회원가입이 완료되었습니다."))
                 .andExpect(jsonPath("$.data.email").value(request.email))
                 .andExpect(jsonPath("$.data.nickname").value(request.nickname))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
 
         @Test
@@ -142,7 +143,7 @@ class UserControllerTest : JwtTest() {
             )
 
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/users/signup")
+                post("/api/v1/users/signup")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request))
             )
@@ -153,7 +154,7 @@ class UserControllerTest : JwtTest() {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value("CONFLICT"))
                 .andExpect(jsonPath("$.message").value("이미 존재하는 이메일입니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
 
         @Test
@@ -183,7 +184,7 @@ class UserControllerTest : JwtTest() {
             )
 
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/users/signup")
+                post("/api/v1/users/signup")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request))
             )
@@ -192,7 +193,7 @@ class UserControllerTest : JwtTest() {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.message").value("이메일 인증이 완료되지 않았습니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
     }
 
@@ -209,7 +210,7 @@ class UserControllerTest : JwtTest() {
             )
 
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/users/login")
+                post("/api/v1/users/login")
                     .secure(true)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request))
@@ -223,7 +224,7 @@ class UserControllerTest : JwtTest() {
                 .andExpect(jsonPath("$.message").value("로그인을 성공했습니다."))
                 .andExpect(cookie().exists("accessToken"))
                 .andExpect(cookie().exists("refreshToken"))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
 
         @Test
@@ -235,7 +236,7 @@ class UserControllerTest : JwtTest() {
             )
 
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/users/login")
+                post("/api/v1/users/login")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request))
             )
@@ -246,7 +247,7 @@ class UserControllerTest : JwtTest() {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.message").value("이메일이 존재하지 않습니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
 
         @Test
@@ -258,7 +259,7 @@ class UserControllerTest : JwtTest() {
             )
 
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/users/login")
+                post("/api/v1/users/login")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request))
             )
@@ -271,7 +272,7 @@ class UserControllerTest : JwtTest() {
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.message").value("비밀번호가 일치하지 않습니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
     }
 
@@ -284,9 +285,9 @@ class UserControllerTest : JwtTest() {
         fun success() {
             val resultActions = mockMvc
                 .perform(
-                    MockMvcRequestBuilders.delete("/api/v1/users/logout")
+                    delete("/api/v1/users/logout")
                 )
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
 
             resultActions
                 .andExpect(handler().handlerType(UserController::class.java))
@@ -294,7 +295,7 @@ class UserControllerTest : JwtTest() {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.message").value("로그아웃이 되었습니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
     }
 
@@ -313,7 +314,7 @@ class UserControllerTest : JwtTest() {
 
 
             val refreshEntity = RefreshToken(
-                userId = mockUser.id!!,
+                userId = mockUser.id,
                 refreshToken = refreshToken,
                 expiration = jwtTokenProvider.getRefreshTokenExpireTime() / 1000
             )
@@ -321,10 +322,10 @@ class UserControllerTest : JwtTest() {
 
             val resultActions = mockMvc
                 .perform(
-                    MockMvcRequestBuilders.post("/api/v1/users/refresh")
+                    post("/api/v1/users/refresh")
                         .cookie(Cookie("refreshToken", refreshToken))
                 )
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
 
             resultActions
                 .andExpect(handler().handlerType(UserController::class.java))
@@ -334,7 +335,7 @@ class UserControllerTest : JwtTest() {
                 .andExpect(jsonPath("$.message").value("새로운 토큰이 발급되었습니다."))
                 .andExpect(cookie().exists("refreshToken"))
                 .andExpect(cookie().exists("accessToken"))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
 
         @Test
@@ -342,9 +343,9 @@ class UserControllerTest : JwtTest() {
         fun fail1() {
             val resultActions = mockMvc
                 .perform( //토큰 없이 요청
-                    MockMvcRequestBuilders.post("/api/v1/users/refresh")
+                    post("/api/v1/users/refresh")
                 )
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
 
             resultActions
                 .andExpect(handler().handlerType(UserController::class.java))
@@ -352,7 +353,7 @@ class UserControllerTest : JwtTest() {
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.message").value("Refresh Token을 찾을 수 없습니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
 
 
@@ -362,11 +363,11 @@ class UserControllerTest : JwtTest() {
             val wrongRefreshToken = "wrong-access-token"
             val resultActions = mockMvc
                 .perform(
-                    MockMvcRequestBuilders.post("/api/v1/users/refresh")
+                    post("/api/v1/users/refresh")
 
                         .cookie(Cookie("refreshToken", wrongRefreshToken))
                 )
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
 
             resultActions
                 .andExpect(handler().handlerType(UserController::class.java))
@@ -374,7 +375,7 @@ class UserControllerTest : JwtTest() {
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.message").value("유효하지 않은 Refresh Token입니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
     }
 }
