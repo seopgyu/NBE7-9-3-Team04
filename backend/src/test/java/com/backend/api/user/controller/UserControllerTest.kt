@@ -17,13 +17,13 @@ import jakarta.servlet.http.Cookie
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -44,28 +44,18 @@ TODO
 @Transactional
 @ActiveProfiles("test")
 @Import(TestRedisConfig::class)
-class UserControllerTest : JwtTest() {
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+class UserControllerTest(
+    private val mockMvc: MockMvc,
+    private val objectMapper: ObjectMapper,
+    private val userRepository: UserRepository,
+    private val passwordEncoder: BCryptPasswordEncoder,
+    private val jwtTokenProvider: JwtTokenProvider,
+    private val verificationCodeRepository: VerificationCodeRepository,
+    private val refreshRedisRepository: RefreshRedisRepository
+) : JwtTest() {
 
-    @Autowired
-    lateinit var mockMvc: MockMvc
 
-    @Autowired
-    lateinit var objectMapper: ObjectMapper
-
-    @Autowired
-    lateinit var userRepository: UserRepository
-
-    @Autowired
-    lateinit var passwordEncoder: BCryptPasswordEncoder
-
-    @Autowired
-    lateinit var jwtTokenProvider: JwtTokenProvider
-
-    @Autowired
-    lateinit var verificationCodeRepository: VerificationCodeRepository
-
-    @Autowired
-    lateinit var refreshRedisRepository: RefreshRedisRepository
 
     @Nested
     @DisplayName("회원가입 API")

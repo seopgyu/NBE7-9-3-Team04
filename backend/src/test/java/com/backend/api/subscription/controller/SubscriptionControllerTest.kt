@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
@@ -33,15 +34,12 @@ import java.time.LocalDateTime
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
 @ActiveProfiles("test")
-class SubscriptionControllerTest {
-    @Autowired
-    lateinit var mockMvc: MockMvc
-
-    @Autowired
-    lateinit var subscriptionRepository: SubscriptionRepository
-
-    @Autowired
-    lateinit var userRepository: UserRepository
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+class SubscriptionControllerTest(
+    private val mockMvc: MockMvc,
+    private val subscriptionRepository: SubscriptionRepository,
+    private val userRepository: UserRepository,
+) {
 
     @MockBean
     lateinit var rq: Rq

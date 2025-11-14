@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
@@ -34,16 +35,13 @@ import java.time.LocalDate
 @TestInstance(
     TestInstance.Lifecycle.PER_CLASS
 )
-class AdminUserControllerTest {
-    @Autowired
-    lateinit var mockMvc: MockMvc
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+class AdminUserControllerTest(
 
-    @Autowired
-    lateinit var userRepository: UserRepository
-
-    @Autowired
-    lateinit var objectMapper: ObjectMapper
-
+    private val mockMvc: MockMvc,
+    private val userRepository: UserRepository,
+    private val objectMapper: ObjectMapper,
+) {
     @MockBean
     lateinit var rq: Rq
 
