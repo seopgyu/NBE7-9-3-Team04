@@ -1,44 +1,22 @@
-package com.backend.global.entity;
+package com.backend.global.entity
 
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
+import jakarta.persistence.*
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.time.LocalDateTime
 
 @MappedSuperclass
-@Getter
-@EntityListeners(AuditingEntityListener.class)
-public abstract class BaseEntity {
-
+@EntityListeners(AuditingEntityListener::class)
+abstract class BaseEntity() {
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
-    public LocalDateTime getModifyDate() {
-        return modifyDate;
-    }
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null
+        get() = field!!
 
     @CreatedDate
-    private LocalDateTime createDate;
+    var createDate: LocalDateTime? = null
 
     @LastModifiedDate
-    private LocalDateTime modifyDate;
-
+    var modifyDate: LocalDateTime? = null
 }
