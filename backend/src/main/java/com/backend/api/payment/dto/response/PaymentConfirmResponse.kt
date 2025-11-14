@@ -16,8 +16,7 @@ data class PaymentConfirmResponse(
     @field:Schema(description = "결제 키 값", example = "1111")
     val paymentKey: String,
 
-    @field:Schema(description = "주문 상품명", example = "PREMIUM"
-    )
+    @field:Schema(description = "주문 상품명", example = "PREMIUM")
     val orderName: String,
 
     @field:Schema(description = "총 결제 금액", example = "9900")

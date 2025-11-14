@@ -48,10 +48,10 @@ class SubscriptionControllerTest {
     @MockBean
     lateinit var rq: Rq
 
-    private lateinit var testUser1: User
-    private lateinit var testUser2: User
-    private lateinit var activeSubscription: Subscription
-    private lateinit var deactiveSubscription: Subscription
+    lateinit var testUser1: User
+    lateinit var testUser2: User
+    lateinit var activeSubscription: Subscription
+    lateinit var deactiveSubscription: Subscription
 
     @BeforeEach
     fun setUp() {
@@ -205,7 +205,7 @@ class SubscriptionControllerTest {
         fun success() {
             //given
 
-            Mockito.`when`<User>(rq.getUser()).thenReturn(testUser1)
+            Mockito.`when`(rq.getUser()).thenReturn(testUser1)
 
 
             //when
