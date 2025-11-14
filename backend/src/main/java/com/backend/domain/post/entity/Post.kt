@@ -12,11 +12,11 @@ import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import java.time.LocalDateTime
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // 'Member' 예시 스타일 (JPA 플러그인 미사용)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 class Post(
 
-    @field:NotNull // 3. Bean Validation을 위해 @field: 타겟을 명시
+    @field:NotNull
     @field:Size(min = 2, max = 255)
     var title: String,// 제목
 
@@ -111,7 +111,7 @@ class Post(
         private var status: PostStatus = PostStatus.ING
         private var pinStatus: PinStatus = PinStatus.PINNED
         private var recruitCount: Int = 0
-        private lateinit var users: User // 'users'는 필수 값이므로 lateinit
+        private lateinit var users: User
         private var postCategoryType: PostCategoryType = PostCategoryType.PROJECT
 
         fun title(title: String) = apply { this.title = title }
