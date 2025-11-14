@@ -24,7 +24,7 @@ class AdminPostService(
     fun getAllPosts(page: Int, admin: User?): PostPageResponse<PostResponse> {
         adminUserService.validateAdminAuthority(admin)
 
-        val pageNum = if (page < 1) 0 else page - 1 // 4. 'var' 대신 'val' 및 page 0-based
+        val pageNum = if (page < 1) 0 else page - 1
         val pageable: Pageable = PageRequest.of(pageNum, 15, Sort.by("createDate").descending())
         val postsPage = postRepository.findAll(pageable)
 
