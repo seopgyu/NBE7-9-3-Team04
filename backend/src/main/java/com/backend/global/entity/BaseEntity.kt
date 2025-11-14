@@ -11,14 +11,11 @@ import java.time.LocalDateTime
 abstract class BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     val id: Long = 0L
 
     @CreatedDate
-    @Column(name = "createdDate")
-    lateinit var _createDate: LocalDateTime
+    lateinit var createDate: LocalDateTime
 
     @LastModifiedDate
-    @Column(name = "modifyDate")
-    lateinit var _modifyDate: LocalDateTime
+    lateinit var modifyDate: LocalDateTime
 }
