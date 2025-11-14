@@ -11,14 +11,14 @@ import java.time.LocalDateTime
 abstract class BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val _id: Long? = null
-
-    val id: Long
-        get() = _id ?: throw IllegalStateException("엔티티의 ID 값이 존재하지 않습니다.")
+    @Column(name = "id")
+    val id: Long = 0L
 
     @CreatedDate
-    var createDate: LocalDateTime? = null
+    @Column(name = "createdDate")
+    lateinit var _createDate: LocalDateTime
 
     @LastModifiedDate
-    var modifyDate: LocalDateTime? = null
+    @Column(name = "modifyDate")
+    lateinit var _modifyDate: LocalDateTime
 }
