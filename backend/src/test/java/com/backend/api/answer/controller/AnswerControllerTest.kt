@@ -3,6 +3,8 @@ package com.backend.api.answer.controller
 import com.backend.api.global.JwtTest
 import com.backend.domain.answer.entity.Answer
 import com.backend.domain.answer.repository.AnswerRepository
+import com.backend.domain.feedback.entity.Feedback
+import com.backend.domain.feedback.repository.FeedbackRepository
 import com.backend.domain.question.entity.Question
 import com.backend.domain.question.repository.QuestionRepository
 import com.backend.domain.user.entity.Role
@@ -33,11 +35,14 @@ class AnswerControllerTest(
     @Autowired
     val questionRepository: QuestionRepository,
     @Autowired
-    val answerRepository: AnswerRepository
+    val answerRepository: AnswerRepository,
+    @Autowired
+    val feedbackRepository: FeedbackRepository
 ) : JwtTest() {
 
     private var questionId: Long = 0
     private var answerIdList: List<Long> = emptyList()
+    private var feedbackList: List<Feedback> = emptyList()
     private var userIdList: List<Long> = emptyList()
 
     @BeforeEach
@@ -94,6 +99,38 @@ class AnswerControllerTest(
         )
 
         answerIdList = answers.map { answerRepository.save(it).id!! }
+
+        val feedbacks = listOf(
+            Feedback.builder().content("0").aiScore(0).answer(answers[0]).build(),
+            Feedback.builder().content("1").aiScore(1).answer(answers[1]).build(),
+            Feedback.builder().content("2").aiScore(2).answer(answers[2]).build(),
+            Feedback.builder().content("3").aiScore(3).answer(answers[3]).build(),
+            Feedback.builder().content("4").aiScore(4).answer(answers[4]).build(),
+            Feedback.builder().content("5").aiScore(5).answer(answers[5]).build(),
+            Feedback.builder().content("6").aiScore(6).answer(answers[6]).build(),
+            Feedback.builder().content("7").aiScore(7).answer(answers[7]).build(),
+            Feedback.builder().content("8").aiScore(8).answer(answers[8]).build(),
+            Feedback.builder().content("9").aiScore(9).answer(answers[9]).build(),
+            Feedback.builder().content("10").aiScore(10).answer(answers[10]).build(),
+            Feedback.builder().content("11").aiScore(11).answer(answers[11]).build(),
+            Feedback.builder().content("12").aiScore(12).answer(answers[12]).build()
+        )
+
+        feedbackList = feedbacks.map { feedbackRepository.save(it) }
+
+        answers[0].feedback = feedbackList[0]
+        answers[1].feedback = feedbackList[1]
+        answers[2].feedback = feedbackList[2]
+        answers[3].feedback = feedbackList[3]
+        answers[4].feedback = feedbackList[4]
+        answers[5].feedback = feedbackList[5]
+        answers[6].feedback = feedbackList[6]
+        answers[7].feedback = feedbackList[7]
+        answers[8].feedback = feedbackList[8]
+        answers[9].feedback = feedbackList[9]
+        answers[10].feedback = feedbackList[10]
+        answers[11].feedback = feedbackList[11]
+        answers[12].feedback = feedbackList[12]
     }
 
     @Nested
