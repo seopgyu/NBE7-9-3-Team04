@@ -1,75 +1,67 @@
-package com.backend.api.post.service;
+package com.backend.api.post.service
 
-import com.backend.api.post.dto.response.PostPageResponse;
-import com.backend.api.post.dto.response.PostResponse;
-import com.backend.api.user.service.AdminUserService;
-import com.backend.domain.post.entity.PinStatus;
-import com.backend.domain.post.entity.Post;
-import com.backend.domain.post.entity.PostStatus;
-import com.backend.domain.post.repository.PostRepository;
-import com.backend.domain.user.entity.User;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import com.backend.api.post.dto.response.PostPageResponse
+import com.backend.api.post.dto.response.PostResponse
+import com.backend.api.user.service.AdminUserService
+import com.backend.domain.post.entity.PinStatus
+import com.backend.domain.post.entity.PostStatus
+import com.backend.domain.post.repository.PostRepository
+import com.backend.domain.user.entity.User
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class AdminPostService {
+class AdminPostService(
+    private val postRepository: PostRepository,
+    private val postService: PostService,
+    private val adminUserService: AdminUserService
+) {
 
-    private final PostRepository postRepository;
-    private final PostService postService;
-    private final AdminUserService adminUserService;
+    fun getAllPosts(page: Int, admin: User?): PostPageResponse<PostResponse> {
+        adminUserService.validateAdminAuthority(admin)
 
-    public PostPageResponse<PostResponse> getAllPosts(int page, User admin) {
-        adminUserService.validateAdminAuthority(admin);
+        val pageNum = if (page < 1) 0 else page - 1 // 4. 'var' 대신 'val' 및 page 0-based
+        val pageable: Pageable = PageRequest.of(pageNum, 15, Sort.by("createDate").descending())
+        val postsPage = postRepository.findAll(pageable)
 
-        if(page < 1) page = 1;
-        Pageable pageable = PageRequest.of(page - 1, 15, Sort.by("createDate").descending());
-        Page<Post> postsPage = postRepository.findAll(pageable);
+        val posts = postsPage.content
+            .map { post -> PostResponse.from(post, false) }
 
-        List<PostResponse> posts =  postsPage.getContent()
-                .stream()
-                .map(post -> PostResponse.from(post, null))
-                .toList();
-
-        return PostPageResponse.from(postsPage, posts);
+        return PostPageResponse.from(postsPage, posts)
     }
 
-    public PostResponse getPostById(Long postId, User user) {
-        adminUserService.validateAdminAuthority(user);
-        Post post = postService.findPostByIdOrThrow(postId);
-        return PostResponse.from(post, null);
-    }
-
-    @Transactional
-    public void deletePost(Long postId, User admin) {
-        adminUserService.validateAdminAuthority(admin);
-        Post post = postService.findPostByIdOrThrow(postId);
-        postRepository.delete(post);
+    fun getPostById(postId: Long, user: User): PostResponse {
+        adminUserService.validateAdminAuthority(user)
+        val post = postService.findPostByIdOrThrow(postId)
+        return PostResponse.from(post, false)
     }
 
     @Transactional
-    public PostResponse updatePinStatus(Long postId, User admin, PinStatus status) {
-        adminUserService.validateAdminAuthority(admin);
-        Post post = postService.findPostByIdOrThrow(postId);
-        post.updatePinStatus(status);
-
-        return PostResponse.from(post, null);
+    fun deletePost(postId: Long, admin: User) {
+        adminUserService.validateAdminAuthority(admin)
+        val post = postService.findPostByIdOrThrow(postId)
+        postRepository.delete(post)
     }
 
     @Transactional
-    public PostResponse updatePostStatus(Long postId, User admin, PostStatus status) {
-        adminUserService.validateAdminAuthority(admin);
-        Post post =postService.findPostByIdOrThrow(postId);
-        post.updateStatus(status);
+    fun updatePinStatus(postId: Long, admin: User, status: PinStatus): PostResponse {
+        adminUserService.validateAdminAuthority(admin)
+        val post = postService.findPostByIdOrThrow(postId)
+        post.updatePinStatus(status)
 
-        return PostResponse.from(post, null);
+        return PostResponse.from(post, false)
+    }
+
+    @Transactional
+    fun updatePostStatus(postId: Long, admin: User, status: PostStatus): PostResponse {
+        adminUserService.validateAdminAuthority(admin)
+        val post = postService.findPostByIdOrThrow(postId)
+        post.updateStatus(status)
+
+        return PostResponse.from(post, false)
     }
 }

@@ -1,4 +1,3 @@
-package com.backend.api.post.service;
+package com.backend.api.post.service
 
-public class PostSearchService {
-}
+class PostSearchService 
