@@ -13,8 +13,8 @@ import org.springframework.data.elasticsearch.core.document.Document
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories
 
 @Configuration
-@Profile("!test")
-@EnableElasticsearchRepositories(basePackages = ["com.backend.domain"])
+@Profile("prod")
+@EnableElasticsearchRepositories(basePackages = ["com.backend.domain.user.repository.search"])
 class ElasticsearchConfig(
 
     @Value("\${spring.elasticsearch.uris}")
