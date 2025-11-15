@@ -31,17 +31,17 @@ data class BillingPaymentResponse(
     val approvedAt: String,
 
     @field:Schema(description = "결제 카드 정보")
-    val card: CardInfo
+    val card: CardInfo?
 ) {
     @JvmRecord
     data class CardInfo(
         @field:Schema(description = "카드 번호 (마스킹 처리)", example = "1234-56**-****-7890")
-        val number: String,
+        val number: String?,
 
         @field:Schema(description = "카드 발급사 이름", example = "국민카드")
-        val issuerName: String,
+        val issuerName: String?,
 
         @field:Schema(description = "카드 구분 (신용/체크)", example = "신용")
-        val cardType: String
+        val cardType: String?
     )
 }
