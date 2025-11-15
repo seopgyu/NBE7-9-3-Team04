@@ -75,7 +75,7 @@ export default function RankingPage() {
     <div className="max-w-screen-xl mx-auto px-6 py-10">
       {/* 제목 */}
       <div className="mb-10">
-        <h1 className="text-3xl font-bold mb-2">랭킹 & 티어</h1>
+        <h1 className="text-3xl font-bold mb-2">🏆 랭킹 & 티어</h1>
         <p className="text-gray-500">문제를 풀고 티어를 올려보세요!</p>
       </div>
 

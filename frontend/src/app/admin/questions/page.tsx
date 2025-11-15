@@ -130,7 +130,7 @@ export default function AdminQuestionsPage() {
       {/*상단 헤더 */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold mb-2">📝 질문 관리</h1>
+          <h1 className="text-3xl font-bold mb-2">📖 질문 관리</h1>
           <p className="text-gray-500">
             관리자가 등록된 질문을 승인/삭제할 수 있습니다.
           </p>

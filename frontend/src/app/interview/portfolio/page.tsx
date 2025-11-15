@@ -76,10 +76,10 @@ export default function AiQuestionPage() {
     fetchQuestions();
   }, []);
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
+    <div className="max-w-screen-xl mx-auto px-6 py-10">
       {/* 페이지 타이틀 */}
       <div className="mb-10">
-        <h1 className="text-3xl font-bold mb-2">포트폴리오 면접 질문</h1>
+        <h1 className="text-3xl font-bold mb-2">📖 포트폴리오 면접 질문</h1>
         <p className="text-gray-500">
           AI가 포트폴리오를 분석하고 예상 면접 질문을 생성해드립니다.
         </p>

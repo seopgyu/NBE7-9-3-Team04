@@ -86,9 +86,9 @@ export default function PortfolioReviewMainPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
+    <div className="max-w-screen-xl mx-auto px-6 py-10">
       <div className="mb-10">
-        <h1 className="text-3xl font-bold mb-2">포트폴리오 첨삭</h1>
+        <h1 className="text-3xl font-bold mb-2">📝 포트폴리오 첨삭</h1>
         <p className="text-gray-500">
           AI가 당신의 포트폴리오를 분석하고 개선 방향을 제안합니다.
         </p>

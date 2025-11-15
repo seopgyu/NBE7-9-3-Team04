@@ -204,7 +204,7 @@ export default function AdminPostsPage() {
   return (
     <div className="max-w-7xl mx-auto p-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">📰 게시글 관리</h1>
+        <h1 className="text-3xl font-bold mb-2">👥 모집글 관리</h1>
         <p className="text-gray-500">등록된 모집글을 관리합니다.</p>
       </div>
 

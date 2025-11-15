@@ -176,7 +176,7 @@ export default function AdminUsersPage() {
   return (
     <div className="max-w-7xl mx-auto p-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">👥 사용자 관리</h1>
+        <h1 className="text-3xl font-bold mb-2">🧑‍💻 사용자 관리</h1>
         <p className="text-gray-500">플랫폼 사용자의 상태를 관리합니다.</p>
       </div>
 

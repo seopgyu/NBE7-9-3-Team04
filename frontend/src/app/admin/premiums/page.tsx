@@ -57,7 +57,7 @@ export default function AdminPaymentsPage() {
     <div className="max-w-7xl mx-auto p-8 space-y-8">
 
       <div>
-        <h1 className="text-3xl font-bold mb-2">💳 결제 관리</h1>
+        <h1 className="text-3xl font-bold mb-2">💰 결제 관리</h1>
         <p className="text-gray-500">
           프리미엄 멤버십 결제 내역과 통계를 조회합니다
         </p>
