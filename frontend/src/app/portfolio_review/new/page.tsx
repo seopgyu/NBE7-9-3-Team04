@@ -18,6 +18,8 @@ export default function NewFeedbackPage() {
 
   // 진행 상태 애니메이션
   useEffect(() => {
+    if (isPremium !== true) return;
+    
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
