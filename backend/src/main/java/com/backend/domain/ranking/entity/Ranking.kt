@@ -34,4 +34,34 @@ class Ranking(
     fun updateRank(rankValue: Int) {
         this.rankValue = rankValue
     }
+
+    // TODO 임시 빌더 제거
+    companion object {
+        @JvmStatic
+        fun builder() = Builder()
+    }
+
+    class Builder {
+        private var totalScore: Int = 0
+        private var tier: Tier = Tier.UNRATED
+        private var rankValue: Int = 0
+        private var user: User? = null
+
+        fun totalScore(score: Int) = apply { this.totalScore = score }
+        fun tier(tier: Tier) = apply { this.tier = tier }
+        fun rankValue(value: Int) = apply { this.rankValue = value }
+        fun user(user: User) = apply { this.user = user }
+
+        fun build(): Ranking {
+            val user = this.user
+                ?: throw IllegalStateException("Ranking.user must not be null")
+
+            return Ranking(
+                totalScore = totalScore,
+                tier = tier,
+                rankValue = rankValue,
+                user = user
+            )
+        }
+    }
 }
