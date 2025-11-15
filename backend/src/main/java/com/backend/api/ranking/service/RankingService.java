@@ -116,7 +116,7 @@ public class RankingService {
                 .map(tuple -> Long.valueOf(tuple.getValue()))
                 .toList();
 
-        List<Ranking> dbRankings = rankingRepository.findByUser_IdIn(userIds);
+        List<Ranking> dbRankings = rankingRepository.findByUserIdIn(userIds);
 
         // Redis 순위와 DB 정보를 결합
         List<RankingResponse> responses = new ArrayList<>();

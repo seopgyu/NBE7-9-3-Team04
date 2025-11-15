@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.*
 
+
 @Service
 class UserService(
     val userRepository: UserRepository,
@@ -102,12 +103,13 @@ class UserService(
         subscriptionRepository.save(basicSubscription)
 
         //TODO Ranking builder 제거 필요
-        val ranking = Ranking.builder()
-            .user(user)
-            .totalScore(0)
-            .tier(Tier.UNRATED)
-            .rankValue(0)
-            .build()
+
+        val ranking = Ranking(
+            user = user,
+            totalScore = 0,
+            tier = Tier.UNRATED,
+            rankValue = 0
+        )
 
         user.assignSubscription(basicSubscription)
         rankingRepository.save(ranking)
