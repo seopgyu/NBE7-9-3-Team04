@@ -46,48 +46,4 @@ class Payment(
     @JoinColumn(name = "subscription_id", nullable = false)
     var subscription: Subscription ?= null
 
-) : BaseEntity() {
-
-    //TODO 임시 빌더 제거
-    companion object {
-        @JvmStatic
-        fun builder() = Builder()
-    }
-
-    class Builder {
-        private var orderId: String = ""
-        private var paymentKey: String? = null
-        private var orderName: String = ""
-        private var totalAmount: Long = 0
-        private var method: String? = null
-        private var status: PaymentStatus = PaymentStatus.REQUESTED
-        private var approvedAt: LocalDateTime? = null
-        private var user: User? = null
-        private var subscription: Subscription? = null
-
-        fun orderId(orderId: String) = apply { this.orderId = orderId }
-        fun paymentKey(paymentKey: String?) = apply { this.paymentKey = paymentKey }
-        fun orderName(orderName: String) = apply { this.orderName = orderName }
-        fun totalAmount(totalAmount: Long) = apply { this.totalAmount = totalAmount }
-        fun method(method: String?) = apply { this.method = method }
-        fun status(status: PaymentStatus) = apply { this.status = status }
-        fun approvedAt(approvedAt: LocalDateTime?) = apply { this.approvedAt = approvedAt }
-        fun user(user: User) = apply { this.user = user }
-        fun subscription(subscription: Subscription) = apply { this.subscription = subscription }
-
-        fun build(): Payment {
-            return Payment(
-                orderId = orderId,
-                paymentKey = paymentKey,
-                orderName = orderName,
-                totalAmount = totalAmount,
-                method = method,
-                status = status,
-                approvedAt = approvedAt,
-                user = user ?: throw IllegalArgumentException("User must not be null"),
-                subscription = subscription ?: throw IllegalArgumentException("Subscription must not be null")
-            )
-        }
-    }
-
-}
+) : BaseEntity()

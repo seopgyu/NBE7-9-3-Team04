@@ -32,18 +32,17 @@ import java.util.*
 
 @Service
 class UserService(
-    val userRepository: UserRepository,
-    val passwordEncoder: PasswordEncoder,
-    val jwtTokenProvider: JwtTokenProvider,
-    val subscriptionRepository: SubscriptionRepository,
-    val emailService: EmailService,
-    val verificationCodeRepository: VerificationCodeRepository,
-    val rankingRepository: RankingRepository,
-    val userSearchRepository: UserSearchRepository,
-    val refreshRedisService: RefreshRedisService,
-    val eventPublisher: ApplicationEventPublisher
+    private val userRepository: UserRepository,
+    private val passwordEncoder: PasswordEncoder,
+    private val jwtTokenProvider: JwtTokenProvider,
+    private val subscriptionRepository: SubscriptionRepository,
+    private val emailService: EmailService,
+    private val verificationCodeRepository: VerificationCodeRepository,
+    private val rankingRepository: RankingRepository,
+    private val userSearchRepository: UserSearchRepository,
+    private val refreshRedisService: RefreshRedisService,
+    private val eventPublisher: ApplicationEventPublisher
 ) {
-
 
     @Transactional
     fun signUp(request: UserSignupRequest): UserSignupResponse {
@@ -101,8 +100,6 @@ class UserService(
         )
 
         subscriptionRepository.save(basicSubscription)
-
-        //TODO Ranking builder 제거 필요
 
         val ranking = Ranking(
             user = user,

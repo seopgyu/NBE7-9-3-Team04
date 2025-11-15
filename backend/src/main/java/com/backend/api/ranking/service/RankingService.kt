@@ -40,6 +40,7 @@ class RankingService(
             tier = Tier.UNRATED,
             rankValue = 0
         )
+
         return rankingRepository.save(ranking)
     }
 
@@ -75,10 +76,20 @@ class RankingService(
         val ranking: Ranking = rankingRepository.findByUser(user)
             ?: throw ErrorException(ErrorCode.RANKING_NOT_FOUND)
 
-        val rankIndex = stringRedisTemplate.opsForZSet()
+        var rankIndex = stringRedisTemplate.opsForZSet()
             .reverseRank(REDIS_PREFIX, user.id.toString())
-            ?: throw ErrorException(ErrorCode.RANKING_NOT_AVAILABLE)
 
+        if(rankIndex == null) {
+            stringRedisTemplate.opsForZSet().add(
+                REDIS_PREFIX,
+                user.id.toString(),
+                ranking.totalScore.toDouble()
+            )
+
+            rankIndex = stringRedisTemplate.opsForZSet()
+                .reverseRank(REDIS_PREFIX, user.id.toString())
+                ?:throw ErrorException(ErrorCode.RANKING_NOT_AVAILABLE)
+        }
 
         val rankValue = rankIndex.toInt() + 1
 
