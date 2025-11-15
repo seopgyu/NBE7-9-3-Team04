@@ -11,6 +11,8 @@ import {
   CommentPageResponse,
 } from "@/types/comment";
 import { marked } from "marked"; // Markdown 변환 라이브러리 추가
+import { toast } from "sonner";
+import { confirmAlert } from "@/lib/confirm";
 
 type CommentWithEdit = CommentResponse & {
   isEditing: boolean;
@@ -115,16 +117,17 @@ export default function RecruitmentDetailPage() {
         const lastPage = Math.ceil(newTotalCount / pageSize);
         fetchComments(lastPage);
       } else {
-        alert(res.message || "댓글 작성 실패");
+        toast.error(res.message || "댓글 작성 실패");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
   // 댓글 삭제
   const handleDeleteComment = async (commentId: number) => {
-    if (!confirm("정말로 댓글을 삭제하시겠습니까?")) return;
+    const ok = await confirmAlert("정말로 댓글을 삭제하시겠습니까?");
+    if (!ok) return;
 
     try {
       const res = (await fetchApi(
@@ -135,12 +138,12 @@ export default function RecruitmentDetailPage() {
       if (res.status === "OK") {
         setComments((prev) => prev.filter((c) => c.id !== commentId));
         setTotalCount((prev) => prev - 1);
-        alert("댓글이 삭제되었습니다.");
+        toast.success("댓글이 삭제되었습니다.");
       } else {
-        alert(res.message || "댓글 삭제 실패");
+        toast.error(res.message || "댓글 삭제 실패");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -191,12 +194,12 @@ export default function RecruitmentDetailPage() {
               : c
           )
         );
-        alert("댓글이 수정되었습니다.");
+        toast.success("댓글이 수정되었습니다.");
       } else {
-        alert(res.message || "댓글 수정 실패");
+        toast.error(res.message || "댓글 수정 실패");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -254,8 +257,11 @@ export default function RecruitmentDetailPage() {
                     </button>
                     <button
                       onClick={async () => {
-                        if (!confirm("정말로 게시글을 삭제하시겠습니까?"))
-                          return;
+                        const ok = await confirmAlert(
+                          "정말로 게시글을 삭제하시겠습니까?"
+                        );
+                        if (!ok) return;
+
                         try {
                           const res = (await fetchApi(
                             `/api/v1/posts/${post.postId}`,
@@ -263,13 +269,13 @@ export default function RecruitmentDetailPage() {
                           )) as { status: string; message?: string };
 
                           if (res.status === "OK") {
-                            alert("게시글이 삭제되었습니다.");
+                            toast.success("게시글이 삭제되었습니다.");
                             window.location.href = "/recruitment";
                           } else {
-                            alert(res.message || "게시글 삭제 실패");
+                            toast.error(res.message || "게시글 삭제 실패");
                           }
                         } catch (err: any) {
-                          alert(err.message);
+                          toast.error(err.message);
                         }
                       }}
                       className="px-3 py-1 rounded-md bg-zinc-500 text-white text-sm hover:bg-zinc-600 cursor-pointer"
@@ -279,8 +285,9 @@ export default function RecruitmentDetailPage() {
 
                     <button
                       onClick={async () => {
-                        if (!confirm("해당 모집글을 마감 처리 하겠습니까?"))
-                          return;
+                        const ok = await confirmAlert("해당 모집글을 마감 처리 하겠습니까?");
+                        if (!ok) return;
+
                         try {
                           const res = (await fetchApi(
                             `/api/v1/posts/${post.postId}/close`,
@@ -288,13 +295,13 @@ export default function RecruitmentDetailPage() {
                           )) as { status: string; message?: string };
 
                           if (res.status === "OK") {
-                            alert("모집글이 마감되었습니다.");
+                            toast.success("모집글이 마감되었습니다.");
                             window.location.reload();
                           } else {
-                            alert(res.message || "모집글 마감 실패");
+                            toast.error(res.message || "모집글 마감 실패");
                           }
                         } catch (err: any) {
-                          alert(err.message);
+                          toast.error(err.message);
                         }
                       }}
                       className="px-3 py-1 rounded-md bg-red-600 text-white text-sm hover:bg-red-700 cursor-pointer"

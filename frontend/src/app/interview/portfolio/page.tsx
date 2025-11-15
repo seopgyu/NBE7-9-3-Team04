@@ -7,6 +7,7 @@ import {
   AiQuestionReadResponse,
   AiQuestionReadAllResponse,
 } from "@/types/aiquestion";
+import { toast } from "sonner";
 
 export default function AiQuestionPage() {
   const [questions, setQuestions] = useState<AiQuestionReadAllResponse | null>(
@@ -46,19 +47,19 @@ export default function AiQuestionPage() {
       // 먼저 이력서 존재 여부 확인
       const resumeCheck = await fetchApi("/api/v1/users/resumes/check", { method: "GET" });
       if (!resumeCheck?.data?.hasResume) {
-        alert("이력서를 먼저 등록해주세요!");
+        toast.error("이력서를 먼저 등록해주세요!");
         router.replace("/mypage/resume");
         return;
       }
 
 
       const res = await fetchApi("/api/v1/ai/questions", { method: "POST" });
-      alert("AI가 새 면접 질문을 생성했습니다!");
+      toast.success("AI가 새 면접 질문을 생성했습니다!");
       await fetchQuestions();
 
     } catch (error) {
       console.error("❌ 면접 질문 생성 실패:", error);
-      alert("질문 생성 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      toast.error("질문 생성 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
     } finally {
       setGenerating(false);
     }

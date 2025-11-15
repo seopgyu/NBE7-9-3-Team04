@@ -16,6 +16,8 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { QuestionResponse, QUESTION_CATEGORY_LIST } from "@/types/question";
+import { toast } from "sonner";
+import { confirmAlert } from "@/lib/confirm";
 
 export default function AdminQuestionsPage() {
   const router = useRouter();
@@ -64,7 +66,7 @@ export default function AdminQuestionsPage() {
       });
 
       if (res.status === "OK") {
-        alert(isApproved ? "질문이 승인되었습니다." : "질문이 미승인 처리되었습니다.");
+        toast.success(isApproved ? "질문이 승인되었습니다." : "질문이 미승인 처리되었습니다.");
         setQuestions((prev) =>
           prev.map((q) =>
             q.questionId === questionId ? { ...q, isApproved } : q
@@ -72,29 +74,31 @@ export default function AdminQuestionsPage() {
         );
         setSelectedQuestion(null);
       } else {
-        alert(res.message || "처리 중 오류가 발생했습니다.");
+        toast.error(res.message || "처리 중 오류가 발생했습니다.");
       }
     } catch {
-      alert("서버 통신 중 오류가 발생했습니다.");
+      toast.error("서버 통신 중 오류가 발생했습니다.");
     }
   };
 
   //삭제
   const handleDelete = async (questionId: number) => {
-    if (!confirm("정말 삭제하시겠습니까?")) return;
+    const confirmed = await confirmAlert("정말 삭제하시겠습니까?");
+    if (!confirmed) return; 
+
     try {
       const res = await fetchApi(`/api/v1/admin/questions/${questionId}`, {
         method: "DELETE",
       });
       if (res.status === "OK") {
-        alert("질문이 삭제되었습니다.");
+        toast.success("질문이 삭제되었습니다.");
         setQuestions((prev) => prev.filter((q) => q.questionId !== questionId));
         setSelectedQuestion(null);
       } else {
-        alert(res.message || "삭제 실패");
+        toast.error(res.message || "삭제 실패");
       }
     } catch {
-      alert("서버 오류가 발생했습니다.");
+      toast.error("서버 오류가 발생했습니다.");
     }
   };
 
@@ -281,7 +285,7 @@ export default function AdminQuestionsPage() {
                       );
 
                       if (res.status === "OK") {
-                        alert("점수가 수정되었습니다.");
+                        toast.success("점수가 수정되었습니다.");
                         // 목록에서도 즉시 반영
                         setQuestions((prev) =>
                           prev.map((q) =>
@@ -291,10 +295,10 @@ export default function AdminQuestionsPage() {
                           )
                         );
                       } else {
-                        alert(res.message || "점수 수정 실패");
+                        toast.error(res.message || "점수 수정 실패");
                       }
                     } catch (err) {
-                      alert("서버 오류로 점수 수정에 실패했습니다.");
+                      toast.error("서버 오류로 점수 수정에 실패했습니다.");
                     }
                   }}
                 >

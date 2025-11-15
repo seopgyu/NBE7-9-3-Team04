@@ -6,6 +6,7 @@ import Link from "next/link";
 import CategoryTab from "@/components/categoryTab";
 import { PostResponse, PostPageResponse, PostStatus, PinStatus } from "@/types/post";
 
+
 export default function RecruitmentPage() {
   const [pinnedPosts, setPinnedPosts] = useState<PostResponse[]>([]);
   const [posts, setPosts] = useState<PostResponse[]>([]);

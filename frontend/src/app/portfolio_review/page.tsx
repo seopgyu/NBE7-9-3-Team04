@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/client"; // API 호출을 위한 헬퍼 함수 임포트
-
+import { toast } from "sonner";
 // 타입 정의 추가
 interface Feedback {
   reviewId: number;
@@ -37,7 +37,7 @@ export default function PortfolioReviewMainPage() {
         }
       } catch (error) {
         console.error("❌ 피드백 목록 불러오기 실패:", error);
-        alert("피드백 목록을 불러오는 데 실패했습니다.");
+        toast.error("피드백 목록을 불러오는 데 실패했습니다.");
       } finally {
         setIsLoading(false);
       }
@@ -54,7 +54,7 @@ export default function PortfolioReviewMainPage() {
 
       // 2️⃣ 분기 처리
       if (!hasResume) {
-        alert("이력서를 먼저 등록해주세요!");
+        toast.error("이력서를 먼저 등록해주세요!");
         router.replace("/mypage/resume");
         return;
       }
@@ -63,7 +63,7 @@ export default function PortfolioReviewMainPage() {
       router.push("/portfolio_review/new");
     } catch (error) {
       console.error("❌ 이력서 존재 여부 확인 실패:", error);
-      alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      toast.error("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     }
   };
 

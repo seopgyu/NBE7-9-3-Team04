@@ -21,7 +21,8 @@ import {
   PostPageResponse,
   PostStatus,
 } from "@/types/post";
-
+import { toast } from "sonner";
+import { confirmAlert } from "@/lib/confirm";
 
 function PostRow({
   post,
@@ -157,33 +158,35 @@ export default function AdminPostsPage() {
       });
 
       if (res.status === "OK") {
-        alert(`게시글이 ${newStatus === "ING" ? "진행중" : "마감"} 처리되었습니다.`);
+        toast.success(`게시글이 ${newStatus === "ING" ? "진행중" : "마감"} 처리되었습니다.`);
         setPosts((prev) =>
           prev.map((p) => (p.postId === postId ? { ...p, status: newStatus } : p))
         );
       } else {
-        alert(res.message || "상태 변경 실패");
+        toast.error(res.message || "상태 변경 실패");
       }
     } catch {
-      alert("서버 오류가 발생했습니다.");
+      toast.error("서버 오류가 발생했습니다.");
     }
   };
 
   //삭제
   const handleDelete = async (postId: number) => {
-    if (!confirm("정말 삭제하시겠습니까?")) return;
+    const ok = await confirmAlert("정말 삭제하시겠습니까?");
+    if(!ok) return;
+
     try {
       const res = await fetchApi(`/api/v1/admin/posts/${postId}`, {
         method: "DELETE",
       });
       if (res.status === "OK") {
-        alert("게시글이 삭제되었습니다.");
+        toast.success("게시글이 삭제되었습니다.");
         setPosts((prev) => prev.filter((p) => p.postId !== postId));
       } else {
-        alert(res.message || "삭제 실패");
+        toast.error(res.message || "삭제 실패");
       }
     } catch {
-      alert("서버 오류가 발생했습니다.");
+      toast.error("서버 오류가 발생했습니다.");
     }
   };
 
