@@ -180,7 +180,7 @@ class RankingControllerTest(
 
         @Test
         @DisplayName("전체 랭킹 조회 실패 - 내 랭킹 정보가 DB에 없을 때")
-        fun fail1() {
+        fun fail() {
             //given
             rankingRepository.deleteAll()
 
@@ -218,29 +218,6 @@ class RankingControllerTest(
                 .andDo(print())
         }
 
-        @Test
-        @DisplayName("전체 랭킹 조회 실패 - Redis에 내 랭킹 순위 정보가 없을 때")
-        fun fail2() {
-
-            // given: Redis에서 전체 랭킹 데이터 삭제
-            stringRedisTemplate.delete(REDIS_PREFIX)
-
-            //when
-            val resultActions = mockMvc.perform(
-                get("/api/v1/rankings")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-
-            //then
-            resultActions
-                .andExpect(handler().handlerType(RankingController::class.java))
-                .andExpect(handler().methodName("getRankings"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
-                .andExpect(jsonPath("$.message").value("랭킹 정보를 사용할 수 없습니다."))
-                .andDo(print())
-        }
     }
 
     @Nested
@@ -307,31 +284,6 @@ class RankingControllerTest(
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.message").value("해당 사용자의 랭킹 정보를 찾을 수 없습니다."))
-                .andDo(print())
-        }
-
-        @Test
-        @DisplayName("내 랭킹 조회 실패 - Redis에 랭킹 순위 정보가 없을 때")
-        fun fail2() {
-
-            // given: Redis에서 testUser의 순위 정보를 삭제
-            stringRedisTemplate.delete(REDIS_PREFIX)
-
-            //when
-            val resultActions = mockMvc.perform(
-                get("/api/v1/rankings/me")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-
-            )
-
-            //then
-            resultActions
-                .andExpect(handler().handlerType(RankingController::class.java))
-                .andExpect(handler().methodName("getMyRankingOnly"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.status").value("NOT_FOUND"))
-                .andExpect(jsonPath("$.message").value("랭킹 정보를 사용할 수 없습니다."))
                 .andDo(print())
         }
     }

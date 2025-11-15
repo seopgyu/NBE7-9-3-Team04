@@ -37,7 +37,6 @@ class Payment(
     @Column(name = "approved_at")
     var approvedAt: LocalDateTime? = null,
 
-    //subscription과 연결되기 때문에 빼도 되지만 일단 남겨둠
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     var user: User,
