@@ -5,7 +5,11 @@ import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/client";
 import { useParams } from "next/navigation";
 import { PostResponse } from "@/types/post";
-import { CommentResponse, CommentRequest, CommentPageResponse } from "@/types/comment";
+import {
+  CommentResponse,
+  CommentRequest,
+  CommentPageResponse,
+} from "@/types/comment";
 import { marked } from "marked"; // Markdown 변환 라이브러리 추가
 
 type CommentWithEdit = CommentResponse & {
@@ -99,10 +103,10 @@ export default function RecruitmentDetailPage() {
     const body: CommentRequest = { content: newComment };
 
     try {
-      const res = (await fetchApi(
-        `/api/v1/posts/${postId}/comments`,
-        { method: "POST", body: JSON.stringify(body) }
-      )) as { status: string; data: CommentResponse; message?: string };
+      const res = (await fetchApi(`/api/v1/posts/${postId}/comments`, {
+        method: "POST",
+        body: JSON.stringify(body),
+      })) as { status: string; data: CommentResponse; message?: string };
 
       if (res.status === "CREATED" && res.data) {
         setNewComment("");
@@ -159,7 +163,9 @@ export default function RecruitmentDetailPage() {
   const handleEditCancel = (commentId: number) => {
     setComments((prev) =>
       prev.map((c) =>
-        c.id === commentId ? { ...c, isEditing: false, editContent: c.content } : c
+        c.id === commentId
+          ? { ...c, isEditing: false, editContent: c.content }
+          : c
       )
     );
   };
@@ -212,15 +218,28 @@ export default function RecruitmentDetailPage() {
         <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
           <div className="mb-6">
             <div className="flex items-start justify-between mb-3">
-              <span
-                className={`px-2 py-0.5 text-xs font-medium rounded-full ${
-                  post.categoryType === "PROJECT"
-                    ? "bg-indigo-50 text-indigo-700"
-                    : "bg-green-50 text-green-700"
-                }`}
-              >
-                {post.categoryType === "PROJECT" ? "프로젝트" : "스터디"}
-              </span>
+              <div className="flex items-center gap-2">
+                <span
+                  className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                    post.categoryType === "PROJECT"
+                      ? "bg-indigo-50 text-indigo-700"
+                      : "bg-green-50 text-green-700"
+                  }`}
+                >
+                  {post.categoryType === "PROJECT" ? "프로젝트" : "스터디"}
+                </span>
+
+                {/* 🔥 모집중 / 마감 배지 (같은 라인으로 이동) */}
+                <span
+                  className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                    post.status === "ING"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-gray-100 text-gray-500"
+                  }`}
+                >
+                  {post.status === "ING" ? "모집중" : "마감"}
+                </span>
+              </div>
 
               <div className="flex gap-2">
                 {post.isMine && (
@@ -235,7 +254,8 @@ export default function RecruitmentDetailPage() {
                     </button>
                     <button
                       onClick={async () => {
-                        if (!confirm("정말로 게시글을 삭제하시겠습니까?")) return;
+                        if (!confirm("정말로 게시글을 삭제하시겠습니까?"))
+                          return;
                         try {
                           const res = (await fetchApi(
                             `/api/v1/posts/${post.postId}`,
@@ -257,9 +277,10 @@ export default function RecruitmentDetailPage() {
                       삭제
                     </button>
 
-                              <button
+                    <button
                       onClick={async () => {
-                        if (!confirm("해당 모집글을 마감 처리 하겠습니까?")) return;
+                        if (!confirm("해당 모집글을 마감 처리 하겠습니까?"))
+                          return;
                         try {
                           const res = (await fetchApi(
                             `/api/v1/posts/${post.postId}/close`,
@@ -309,7 +330,9 @@ export default function RecruitmentDetailPage() {
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold">댓글 {totalCount}개</h3>
             <div className="flex items-center gap-2">
-              <span className="text-lg font-semibold">{currentPage} / {totalPages === 0 ? 1 : totalPages}</span>
+              <span className="text-lg font-semibold">
+                {currentPage} / {totalPages === 0 ? 1 : totalPages}
+              </span>
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
@@ -337,8 +360,12 @@ export default function RecruitmentDetailPage() {
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm">{comment.authorNickName}</span>
-                      <span className="text-xs text-gray-400">{comment.createDate.split("T")[0]}</span>
+                      <span className="font-semibold text-sm">
+                        {comment.authorNickName}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {comment.createDate.split("T")[0]}
+                      </span>
                     </div>
 
                     {!comment.isEditing ? (
@@ -383,7 +410,9 @@ export default function RecruitmentDetailPage() {
                   ) : (
                     <textarea
                       value={comment.editContent}
-                      onChange={(e) => handleEditChange(comment.id, e.target.value)}
+                      onChange={(e) =>
+                        handleEditChange(comment.id, e.target.value)
+                      }
                       rows={3}
                       className="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -417,7 +446,9 @@ export default function RecruitmentDetailPage() {
                 key={page}
                 onClick={() => handlePageChange(page)}
                 className={`px-3 py-1 rounded ${
-                  currentPage === page ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                  currentPage === page
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 hover:bg-gray-300 cursor-pointer"
                 }`}
               >
                 {page}
