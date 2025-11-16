@@ -16,38 +16,33 @@ import java.time.LocalDateTime
 @Entity
 class Post(
 
-    @field:NotNull
     @field:Size(min = 2, max = 255)
     var title: String,// 제목
 
-    @field:NotNull
     @field:Size(min = 2)
     var introduction: String,// 한 줄 소개
 
-    @field:NotNull
     @field:Size(min = 10, max = 5000)
     var content: String,// 내용
 
     @field:NotNull
     var deadline: LocalDateTime, // 마감일
 
-    @field:NotNull
     @field:Enumerated(EnumType.STRING)
     var status: PostStatus, // 진행상태
 
-    @field:NotNull
     @field:Enumerated(EnumType.STRING)
     var pinStatus: PinStatus,// 상단 고정 여부
 
-    @field:NotNull
+
     var recruitCount: Int, // 모집 인원
 
-    @field:NotNull
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     val users: User, // 게시글 작성자 ID
 
-    @field:NotNull
+
     @field:Enumerated(EnumType.STRING)
     @Column(length = 30, nullable = false)
     var postCategoryType: PostCategoryType
