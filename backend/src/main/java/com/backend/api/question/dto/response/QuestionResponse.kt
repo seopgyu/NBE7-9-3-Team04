@@ -40,12 +40,12 @@ data class QuestionResponse(
     companion object {
         fun from(question: Question): QuestionResponse =
             QuestionResponse(
-                questionId = question.id!!,
+                questionId = question.id,
                 title = question.title,
                 content = question.content,
                 isApproved = question.isApproved ?: false,
                 score = question.score ?: 0,
-                authorId = question.author.id!!,
+                authorId = question.author.id,
                 authorNickname = question.author.nickname,
                 categoryType = question.categoryType,
                 createdDate = question.createDate,

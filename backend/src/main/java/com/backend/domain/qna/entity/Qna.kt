@@ -30,11 +30,10 @@ class Qna(
 
 ) : BaseEntity() {
 
-    // JPA 기본 생성자
     protected constructor() : this(
         title = "",
         content = "",
-        author = User(),   // JPA용 dummy 객체 (실제 사용 X)
+        author = User(),
         categoryType = null,
         adminAnswer = null,
         isAnswered = false
@@ -45,6 +44,7 @@ class Qna(
         fun builder() = Builder()
     }
 
+    // 임시 Builder
     class Builder {
         private var title: String = ""
         private var content: String = ""
@@ -56,14 +56,19 @@ class Qna(
         fun author(author: User) = apply { this.author = author }
         fun categoryType(categoryType: QnaCategoryType?) = apply { this.categoryType = categoryType }
 
-        fun build() = Qna(
-            title = title,
-            content = content,
-            author = author!!,
-            categoryType = categoryType
-        )
+        fun build(): Qna {
+            val nonNullAuthor = requireNotNull(author) { "Author must not be null" }
+
+            return Qna(
+                title = title,
+                content = content,
+                author = nonNullAuthor,
+                categoryType = categoryType
+            )
+        }
     }
 
+    // 수정 기능
     fun updateQna(
         title: String,
         content: String,
@@ -74,6 +79,7 @@ class Qna(
         this.categoryType = categoryType
     }
 
+    // 관리자 답변 등록
     fun registerAnswer(answer: String) {
         this.adminAnswer = answer
         this.isAnswered = true

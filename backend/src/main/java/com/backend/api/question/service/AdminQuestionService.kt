@@ -15,6 +15,7 @@ import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -26,49 +27,43 @@ class AdminQuestionService(
 ) {
 
     // 관리자 권한 검증
-    private fun validateAdminAuthority(user: User?) {
-        if (user == null) throw ErrorException(ErrorCode.UNAUTHORIZED_USER)
-        if (user.role != Role.ADMIN) throw ErrorException(ErrorCode.FORBIDDEN)
+    private fun requireAdmin(user: User?): User {
+        val u = user ?: throw ErrorException(ErrorCode.UNAUTHORIZED_USER)
+        if (u.role != Role.ADMIN) throw ErrorException(ErrorCode.FORBIDDEN)
+        return u
     }
 
-    // 질문 조회 또는 예외
+    // ID로 질문 조회
     private fun findByIdOrThrow(questionId: Long): Question =
-        questionRepository.findById(questionId)
-            .orElseThrow { ErrorException(ErrorCode.NOT_FOUND_QUESTION) }
+        questionRepository.findByIdOrNull(questionId)
+            ?: throw ErrorException(ErrorCode.NOT_FOUND_QUESTION)
 
     // 관리자 질문 생성
     @Transactional
     fun addQuestion(@Valid request: AdminQuestionAddRequest, user: User?): QuestionResponse {
-        validateAdminAuthority(user)
-        val question = createQuestion(request, user!!)
-        val saved = questionRepository.save(question)
-        return QuestionResponse.from(saved)
-    }
+        val admin = requireAdmin(user)
 
-    private fun createQuestion(request: AdminQuestionAddRequest, user: User): Question {
         val question = Question(
             title = request.title,
             content = request.content,
-            author = user,
+            author = admin,
             categoryType = request.categoryType
-        )
+        ).apply {
+            request.isApproved?.let { updateApproved(it) }
+            request.score?.let { updateScore(it) }
+        }
 
-        request.isApproved?.let { question.updateApproved(it) }
-        request.score?.let { question.updateScore(it) }
-
-        return question
+        val saved = questionRepository.save(question)
+        return QuestionResponse.from(saved)
     }
 
     // 관리자 질문 수정
     @Transactional
     fun updateQuestion(questionId: Long, @Valid request: AdminQuestionUpdateRequest, user: User?): QuestionResponse {
-        validateAdminAuthority(user)
-        val question = findByIdOrThrow(questionId)
-        updateAdminQuestion(question, request)
-        return QuestionResponse.from(question)
-    }
+        requireAdmin(user)
 
-    private fun updateAdminQuestion(question: Question, request: AdminQuestionUpdateRequest) {
+        val question = findByIdOrThrow(questionId)
+
         question.updateAdminQuestion(
             request.title,
             request.content,
@@ -76,45 +71,52 @@ class AdminQuestionService(
             request.score,
             request.categoryType
         )
-    }
 
-    // 질문 승인/비승인 처리
-    @Transactional
-    fun approveQuestion(questionId: Long, isApproved: Boolean, user: User?): QuestionResponse {
-        validateAdminAuthority(user)
-        val question = findByIdOrThrow(questionId)
-        question.updateApproved(isApproved)
         return QuestionResponse.from(question)
     }
 
-    // 질문 점수 수정
+    // 승인/비승인 처리
+    @Transactional
+    fun approveQuestion(questionId: Long, isApproved: Boolean, user: User?): QuestionResponse {
+        requireAdmin(user)
+
+        val question = findByIdOrThrow(questionId)
+        question.updateApproved(isApproved)
+
+        return QuestionResponse.from(question)
+    }
+
+    // 점수 수정
     @Transactional
     fun setQuestionScore(questionId: Long, score: Int?, user: User?): QuestionResponse {
-        validateAdminAuthority(user)
+        requireAdmin(user)
+
         val question = findByIdOrThrow(questionId)
-        if (score != null) question.updateScore(score)
+        score?.let { question.updateScore(it) }
+
         return QuestionResponse.from(question)
     }
 
     // 관리자 질문 전체 조회
     fun getAllQuestions(page: Int, user: User?): QuestionPageResponse<QuestionResponse> {
-        validateAdminAuthority(user)
+        requireAdmin(user)
 
-        val pageNum = if (page < 1) 1 else page
+        val pageNum = maxOf(page, 1)
         val pageable: Pageable = PageRequest.of(pageNum - 1, 15, Sort.by("createDate").descending())
 
         val questionsPage = questionRepository.findAll(pageable)
 
         if (questionsPage.isEmpty) throw ErrorException(ErrorCode.NOT_FOUND_QUESTION)
 
-        val questions = questionsPage.content.map { QuestionResponse.from(it) }
+        val responses = questionsPage.content.map { QuestionResponse.from(it) }
 
-        return QuestionPageResponse.from(questionsPage, questions)
+        return QuestionPageResponse.from(questionsPage, responses)
     }
 
     // 관리자 질문 단건 조회
     fun getQuestionById(questionId: Long, user: User?): QuestionResponse {
-        validateAdminAuthority(user)
+        requireAdmin(user)
+
         val question = findByIdOrThrow(questionId)
         return QuestionResponse.from(question)
     }
@@ -122,7 +124,8 @@ class AdminQuestionService(
     // 관리자 질문 삭제
     @Transactional
     fun deleteQuestion(questionId: Long, user: User?) {
-        validateAdminAuthority(user)
+        requireAdmin(user)
+
         val question = findByIdOrThrow(questionId)
         questionRepository.delete(question)
     }

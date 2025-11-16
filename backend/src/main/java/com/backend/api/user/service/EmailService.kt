@@ -29,6 +29,7 @@ class EmailService(
         private const val CODE_LENGTH = 6
     }
 
+    // 인증코드 생성 + 이메일 발송
     @Transactional
     fun createAndSendVerificationCode(email: String) {
         verificationCodeRepository.findByEmail(email)
@@ -48,6 +49,7 @@ class EmailService(
         sendVerificationMailAsync(email, code)
     }
 
+    // 인증 메일 비동기 발송
     @Async("mailExecutor")
     fun sendVerificationMailAsync(email: String, code: String) {
         try {
@@ -57,11 +59,11 @@ class EmailService(
                 text =
                     """
                     안녕하세요. Dev-Station 입니다.
-                    
-                    회원가입을 위해 아래 인증 코드를 입력해주세요.
+
+                    아래 인증 코드를 입력해 주세요.
                     인증코드: $code
-                    
-                    해당 코드는 5분간 유효합니다.
+
+                    본 코드는 5분간 유효합니다.
                     """.trimIndent()
             }
 
@@ -73,6 +75,7 @@ class EmailService(
         }
     }
 
+    // 인증코드 생성
     private fun generateVerificationCode(): String {
         val random = SecureRandom()
         return buildString(CODE_LENGTH) {
@@ -82,6 +85,7 @@ class EmailService(
         }
     }
 
+    // 인증코드 검증
     fun verifyCode(email: String, code: String) {
         val verification = verificationCodeRepository.findByEmail(email)
             ?: throw ErrorException(ErrorCode.INVALID_VERIFICATION_CODE)
@@ -100,9 +104,11 @@ class EmailService(
         log.info("[이메일 인증] 인증 성공: {}", email)
     }
 
+    // 이메일 인증 여부 조회
     fun isVerified(email: String): Boolean =
         verificationCodeRepository.findByEmail(email)?.verified ?: false
 
+    // 회원가입 환영 이메일
     @Async("mailExecutor")
     fun sendWelcomeMail(user: User) {
         try {
@@ -112,13 +118,11 @@ class EmailService(
                 text =
                     """
                     안녕하세요, ${user.name}님 👋
-                    
+
                     Dev-Station에 가입해 주셔서 감사합니다.
-                    지금부터 CS 인터뷰 문제 풀이, AI 피드백, 프로젝트 모집 등 모든 기능을 이용하실 수 있습니다.
-                    
-                    앞으로도 좋은 서비스로 보답하겠습니다!
-                    
-                    - Dev-Station 팀 드림 -
+                    다양한 기능을 이용하실 수 있습니다.
+
+                    앞으로 좋은 서비스로 보답하겠습니다!
                     """.trimIndent()
             }
 
@@ -129,57 +133,65 @@ class EmailService(
         }
     }
 
+    // 계정 상태 변경 메일
     @Async("mailExecutor")
     fun sendStatusChangeMail(user: User, penalty: UserPenalty?) {
 
         val status = user.accountStatus
 
-        // 정지/영구정지는 패널티 필수
+        // 정지 / 영구정지 상태는 penalty 필수
         if ((status == AccountStatus.SUSPENDED || status == AccountStatus.BANNED) && penalty == null) {
             log.error("패널티가 있어야 하는 상태인데 penalty=null | user={}", user.email)
             return
         }
 
+        val p = penalty // 가독성을 위해 별도 변수화
+
+        // 이메일 제목 + 내용 처리
         val (subject, content) = when (status) {
 
             AccountStatus.SUSPENDED -> {
+                val reason = p?.reason ?: "사유 정보 없음"
+                val endAt = p?.endAt ?: "미정"
+
                 "[Dev-Station] 계정 일시정지 안내" to """
                 안녕하세요, ${user.name}님.
-                
+
                 회원님의 계정이 일시정지되었습니다.
-                사유: ${penalty!!.reason}
-                종료일: ${penalty.endAt ?: "미정"}
-            """.trimIndent()
+                사유: $reason
+                종료일: $endAt
+                """.trimIndent()
             }
 
             AccountStatus.BANNED -> {
+                val reason = p?.reason ?: "사유 정보 없음"
+
                 "[Dev-Station] 계정 영구 정지 안내" to """
                 안녕하세요, ${user.name}님.
-                
+
                 회원님의 계정이 영구 정지되었습니다.
-                사유: ${penalty!!.reason}
-            """.trimIndent()
+                사유: $reason
+                """.trimIndent()
             }
 
             AccountStatus.ACTIVE -> {
                 "[Dev-Station] 계정 복구 안내" to """
                 안녕하세요, ${user.name}님.
-                
-                회원님의 계정이 복구되었습니다.
-            """.trimIndent()
+
+                회원님의 계정이 정상으로 복구되었습니다.
+                """.trimIndent()
             }
 
             AccountStatus.DEACTIVATED -> {
                 "[Dev-Station] 탈퇴 완료 안내" to """
                 안녕하세요, ${user.name}님.
-                
-                회원님의 계정 탈퇴 처리가 완료되었습니다.
-            """.trimIndent()
-            }
 
+                회원님의 계정 탈퇴 처리가 완료되었습니다.
+                """.trimIndent()
+            }
         }
 
-        // 메일 발송
+        // 이메일 발송
         val message = SimpleMailMessage().apply {
             setTo(user.email)
             this.subject = subject
@@ -189,6 +201,7 @@ class EmailService(
         mailSender.send(message)
     }
 
+    // 임시 비밀번호 발송
     fun sendNewPassword(email: String, newPassword: String) {
         try {
             val message = SimpleMailMessage().apply {
@@ -198,8 +211,8 @@ class EmailService(
                     """
                     안녕하세요. Dev-Station 입니다.
 
-                    비밀번호 재설정 요청에 따라 임시 비밀번호를 발급해드렸습니다.
-                    아래의 비밀번호로 로그인 후, 반드시 새 비밀번호로 변경해주세요.
+                    요청하신 임시 비밀번호를 발급해드립니다.
+                    로그인 후 반드시 새 비밀번호로 변경해주세요.
 
                     임시 비밀번호: $newPassword
                     """.trimIndent()

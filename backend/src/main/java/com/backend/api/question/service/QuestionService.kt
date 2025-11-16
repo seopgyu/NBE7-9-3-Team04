@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -32,18 +33,17 @@ class QuestionService(
     private val rq: Rq
 ) {
 
-    // 사용자 권한 검증
-    private fun validateUserAuthority(user: User?) {
-        if (user == null) throw ErrorException(ErrorCode.UNAUTHORIZED_USER)
-        if (user.role != Role.USER) throw ErrorException(ErrorCode.FORBIDDEN)
+    // 권한 검증 후 반환
+    private fun requireUser(user: User?): User {
+        val u = user ?: throw ErrorException(ErrorCode.UNAUTHORIZED_USER)
+        if (u.role != Role.USER) throw ErrorException(ErrorCode.FORBIDDEN)
+        return u
     }
 
-    // 질문 존재 여부 검증
     fun findByIdOrThrow(questionId: Long): Question =
-        questionRepository.findById(questionId)
-            .orElseThrow { ErrorException(ErrorCode.NOT_FOUND_QUESTION) }
+        questionRepository.findByIdOrNull(questionId)
+            ?: throw ErrorException(ErrorCode.NOT_FOUND_QUESTION)
 
-    // 질문 작성자 동일 여부 검증
     private fun validateQuestionAuthor(question: Question, user: User) {
         if (question.author.id != user.id) {
             throw ErrorException(ErrorCode.FORBIDDEN)
@@ -56,56 +56,47 @@ class QuestionService(
         }
     }
 
-    // 사용자 질문 생성
     @Transactional
     fun addQuestion(@Valid request: QuestionAddRequest, user: User?): QuestionResponse {
-        validateUserAuthority(user)
-        val question = createQuestion(request, user!!)
-        val saved = saveQuestion(question)
-        return QuestionResponse.from(saved)
-    }
+        val u = requireUser(user)
 
-    private fun createQuestion(request: QuestionAddRequest, user: User): Question =
-        Question(
+        val question = Question(
             title = request.title,
             content = request.content,
-            author = user,
+            author = u,
             categoryType = request.categoryType
         )
 
-    private fun saveQuestion(question: Question): Question =
-        questionRepository.save(question)
-
-    // 사용자 질문 수정
-    @Transactional
-    fun updateQuestion(questionId: Long, @Valid request: QuestionUpdateRequest, user: User?): QuestionResponse {
-        validateUserAuthority(user)
-        val question = findByIdOrThrow(questionId)
-        validateQuestionAuthor(question, user!!)
-        updateQuestionContent(question, request)
-        return QuestionResponse.from(question)
+        val saved = questionRepository.save(question)
+        return QuestionResponse.from(saved)
     }
 
-    private fun updateQuestionContent(question: Question, request: QuestionUpdateRequest) {
+    @Transactional
+    fun updateQuestion(questionId: Long, @Valid request: QuestionUpdateRequest, user: User?): QuestionResponse {
+        val u = requireUser(user)
+
+        val question = findByIdOrThrow(questionId)
+        validateQuestionAuthor(question, u)
+
         question.updateUserQuestion(
             request.title,
             request.content,
             request.categoryType
         )
+
+        return QuestionResponse.from(question)
     }
 
-    // 승인된 질문 전체 조회
     fun getApprovedQuestions(page: Int, categoryType: QuestionCategoryType?): QuestionPageResponse<QuestionResponse> {
-        var pageNum = page
-        if (pageNum < 1) pageNum = 1
+        val pageNum = maxOf(page, 1)
 
         val pageable: Pageable = PageRequest.of(pageNum - 1, 9, Sort.by("createDate").descending())
 
-        val questionsPage: Page<Question> = when {
-            categoryType == null ->
+        val questionsPage: Page<Question> = when (categoryType) {
+            null ->
                 questionRepository.findApprovedQuestionsExcludingCategory(QuestionCategoryType.PORTFOLIO, pageable)
 
-            categoryType == QuestionCategoryType.PORTFOLIO ->
+            QuestionCategoryType.PORTFOLIO ->
                 questionRepository.findApprovedQuestionsByCategory(QuestionCategoryType.PORTFOLIO, pageable)
 
             else ->
@@ -114,31 +105,24 @@ class QuestionService(
 
         if (questionsPage.isEmpty) throw ErrorException(ErrorCode.NOT_FOUND_QUESTION)
 
-        val questions = mapToResponseList(questionsPage)
+        val responses = questionsPage.content.map { QuestionResponse.from(it) }
 
-        return QuestionPageResponse.from(questionsPage, questions)
+        return QuestionPageResponse.from(questionsPage, responses)
     }
 
-    private fun mapToResponseList(page: Page<Question>): List<QuestionResponse> =
-        page.content.map { QuestionResponse.from(it) }
-
-    // 승인된 질문 단건 조회
     fun getApprovedQuestionById(questionId: Long): QuestionResponse {
         val question = findByIdOrThrow(questionId)
         validateApprovedQuestion(question)
         return QuestionResponse.from(question)
     }
 
-    // 승인되지 않은 질문 단건 조회 (수정용)
     fun getNotApprovedQuestionById(userId: Long, questionId: Long, user: User?): QuestionResponse {
-        validateUserAuthority(user)
+        val u = requireUser(user)
 
-        if (user!!.id != userId) {
-            throw ErrorException(ErrorCode.QUESTION_INVALID_USER)
-        }
+        if (u.id != userId) throw ErrorException(ErrorCode.QUESTION_INVALID_USER)
 
         val question = findByIdOrThrow(questionId)
-        validateQuestionAuthor(question, user)
+        validateQuestionAuthor(question, u)
 
         if (question.isApproved == true) {
             throw ErrorException(ErrorCode.ALREADY_APPROVED_QUESTION)
@@ -160,29 +144,27 @@ class QuestionService(
         questionRepository.getByUserAndGroupId(user, groupId)
             ?: throw ErrorException(ErrorCode.NOT_FOUND_QUESTION)
 
-    // 사용자 작성 질문 수
     fun countByUser(user: User?): Int {
-        validateUserAuthority(user)
-        return questionRepository.countByAuthor(user!!)
+        val u = requireUser(user)
+        return questionRepository.countByAuthor(u)
     }
 
-    // 사용자 아이디로 질문 조회
     fun findQuestionsByUserId(page: Int, userId: Long): QuestionPageResponse<QuestionResponse> {
-        userService.getUser(userId)
-        val currentUser = rq.getUser()
+        userService.getUser(userId) // 존재 확인
 
-        if (currentUser.id != userId && currentUser.role != Role.ADMIN) {
+        val current = rq.getUser()
+
+        // 본인이거나 관리자만 가능
+        if (current.id != userId && current.role != Role.ADMIN) {
             throw ErrorException(ErrorCode.QUESTION_INVALID_USER)
         }
 
-        var pageNum = page
-        if (pageNum < 1) pageNum = 1
-
+        val pageNum = maxOf(page, 1)
         val pageable: Pageable = PageRequest.of(pageNum - 1, 15, Sort.by("createDate").descending())
+
         val questionsPage = questionRepository.findByAuthorId(userId, pageable)
+        val responses = questionsPage.content.map { QuestionResponse.from(it) }
 
-        val list = questionsPage.content.map { QuestionResponse.from(it) }
-
-        return QuestionPageResponse.from(questionsPage, list)
+        return QuestionPageResponse.from(questionsPage, responses)
     }
 }
