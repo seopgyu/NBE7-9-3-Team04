@@ -11,11 +11,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
+
+import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
@@ -26,15 +27,13 @@ import org.springframework.transaction.annotation.Transactional
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false) // security filter disable
 @Transactional
-internal class ResumeControllerTest : JwtTest() {
-    @Autowired
-    private val mockMvc: MockMvc? = null
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+class ResumeControllerTest(
+    private val mockMvc: MockMvc,
+    private val objectMapper: ObjectMapper,
+    private val resumeRepository: ResumeRepository
+) : JwtTest() {
 
-    @Autowired
-    private val objectMapper: ObjectMapper? = null
-
-    @Autowired
-    private val resumeRepository: ResumeRepository? = null
 
     @BeforeEach
     fun setUp() {
@@ -47,7 +46,7 @@ internal class ResumeControllerTest : JwtTest() {
             "http://portfolio.example.com",
             mockUser
         )
-        resumeRepository!!.save<Resume?>(resume)
+        resumeRepository.save<Resume?>(resume)
     }
 
     @Nested
@@ -58,7 +57,7 @@ internal class ResumeControllerTest : JwtTest() {
         @Throws(Exception::class)
         fun success() {
             // given
-            resumeRepository!!.deleteAll()
+            resumeRepository.deleteAll()
             val request = ResumeCreateRequest(
                 "이력서 내용입니다.",
                 "Java, Spring Boot",
@@ -69,11 +68,11 @@ internal class ResumeControllerTest : JwtTest() {
             )
 
             // when
-            val resultActions = mockMvc!!.perform(
+            val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/users/resumes")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper!!.writeValueAsString(request))
+                    .content(objectMapper.writeValueAsString(request))
             )
             // then
             resultActions
@@ -107,12 +106,12 @@ internal class ResumeControllerTest : JwtTest() {
                 "http://portfolio.example.com"
             )
             // when
-            val resultActions = mockMvc!!.perform(
+            val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/users/resumes")
 
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper!!.writeValueAsString(request))
+                    .content(objectMapper.writeValueAsString(request))
             )
             // then
             resultActions
@@ -138,11 +137,11 @@ internal class ResumeControllerTest : JwtTest() {
                 "http://portfolio.example.com"
             )
             // when
-            mockMvc!!.perform(
+            mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/users/resumes")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper!!.writeValueAsString(request))
+                    .content(objectMapper.writeValueAsString(request))
             )
 
             val resultActions = mockMvc.perform(
@@ -180,11 +179,11 @@ internal class ResumeControllerTest : JwtTest() {
             )
 
             // when
-            val resultActions = mockMvc!!.perform(
+            val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/v1/users/resumes")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper!!.writeValueAsString(request))
+                    .content(objectMapper.writeValueAsString(request))
             )
             // then
             resultActions
@@ -207,7 +206,7 @@ internal class ResumeControllerTest : JwtTest() {
         @DisplayName("이력서가 존재하지 않을 때")
         @Throws(Exception::class)
         fun fail1() {
-            resumeRepository!!.deleteAll()
+            resumeRepository.deleteAll()
             //given
             val request = ResumeUpdateRequest(
                 "수정된 이력서 내용입니다.",
@@ -218,11 +217,11 @@ internal class ResumeControllerTest : JwtTest() {
                 "http://portfolio.example2.com"
             )
             // when
-            val resultActions = mockMvc!!.perform(
+            val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/v1/users/resumes")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper!!.writeValueAsString(request))
+                    .content(objectMapper.writeValueAsString(request))
             )
             // then
             resultActions
@@ -244,10 +243,10 @@ internal class ResumeControllerTest : JwtTest() {
         fun success() {
             //given
 
-            val resume: Resume? = resumeRepository!!.findByUser(mockUser)
+            val resume: Resume? = resumeRepository.findByUser(mockUser)
 
             // when
-            val resultActions = mockMvc!!.perform(
+            val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/v1/users/resumes/${resume?.id}")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -269,7 +268,7 @@ internal class ResumeControllerTest : JwtTest() {
             // given
             val resumeId = 999L
             // when
-            val resultActions = mockMvc!!.perform(
+            val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/v1/users/resumes/${resumeId}")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -291,7 +290,7 @@ internal class ResumeControllerTest : JwtTest() {
             // given
             val resumeId = 1L
             // when
-            val resultActions = mockMvc!!.perform(
+            val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/v1/users/resumes/${resumeId}")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -314,7 +313,7 @@ internal class ResumeControllerTest : JwtTest() {
             val resumeId = 1L
             userRepository.deleteAll()
             // when
-            val resultActions = mockMvc!!.perform(
+            val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/v1/users/resumes/${resumeId}")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -341,7 +340,7 @@ internal class ResumeControllerTest : JwtTest() {
 
             // when
 
-            val resultActions = mockMvc!!.perform(
+            val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/v1/users/resumes")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -370,7 +369,7 @@ internal class ResumeControllerTest : JwtTest() {
             // given
             userRepository.deleteAll()
             // when
-            val resultActions = mockMvc!!.perform(
+            val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/v1/users/resumes")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
