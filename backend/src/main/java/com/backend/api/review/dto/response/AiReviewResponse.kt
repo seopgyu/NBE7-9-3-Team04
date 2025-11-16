@@ -1,20 +1,23 @@
-package com.backend.api.review.dto.response;
+package com.backend.api.review.dto.response
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema
+import java.time.LocalDateTime
 
-import java.time.LocalDateTime;
+@JvmRecord
+data class AiReviewResponse(
+    @Schema(description = "리뷰 ID", example = "1")
+    val reviewId: Long,
 
-public record AiReviewResponse(
-        @Schema(description = "리뷰 ID", example = "1")
-        Long reviewId,
+    @Schema(description = "포트폴리오 AI 첨삭 (Markdown 형식)", example = "## 포트폴리오 분석 결과...")
+    val feedbackContent: String,
 
-        @Schema(description = "포트폴리오 AI 첨삭 (Markdown 형식)", example = "## 포트폴리오 분석 결과...")
-        String feedbackContent,
-
-        @Schema(description = "생성일", example = "2025-10-27T10:15:30")
-        LocalDateTime createDate
+    @Schema(description = "생성일", example = "2025-10-27T10:15:30")
+    val createDate: LocalDateTime
 ) {
-    public static AiReviewResponse of(Long reviewId, String feedbackContent, LocalDateTime createDate) {
-        return new AiReviewResponse(reviewId, feedbackContent, createDate);
+    companion object {
+        @JvmStatic
+        fun of(reviewId: Long, feedbackContent: String, createDate: LocalDateTime): AiReviewResponse {
+            return AiReviewResponse(reviewId, feedbackContent, createDate)
+        }
     }
 }
