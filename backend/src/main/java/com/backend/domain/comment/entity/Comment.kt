@@ -1,11 +1,11 @@
-package com.backend.domain.comment.entity;
+package com.backend.domain.comment.entity
 
-import com.backend.domain.post.entity.Post;
-import com.backend.domain.user.entity.User;
-import com.backend.global.entity.BaseEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import lombok.*;
+import com.backend.domain.post.entity.Post
+import com.backend.domain.user.entity.User
+import com.backend.global.entity.BaseEntity
+import com.fasterxml.jackson.annotation.JsonIgnore
+import jakarta.persistence.*
+import lombok.*
 
 @Entity
 @Getter
@@ -13,27 +13,27 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Table(
-        indexes = {
-                @Index(name = "idx_comment_post_create", columnList = "post_id, create_date"),
-                @Index(name = "idx_comment_author_create", columnList = "author_id, create_date")
-        }
+    indexes = [Index(
+        name = "idx_comment_post_create",
+        columnList = "post_id, create_date"
+    ), Index(name = "idx_comment_author_create", columnList = "author_id, create_date")]
 )
-public class Comment extends BaseEntity {
+class Comment(
 
     @Column(nullable = false, length = 500)
-    private String content;
+    var content: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinColumn(nullable = false)
-    private Post post;
+    var post: Post,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private User author;
+    var author: User
 
-    public void updateContent(String content) {
-        this.content = content;
+) : BaseEntity() {
+    fun updateContent(content: String) {
+        this.content = content
     }
-
 }
