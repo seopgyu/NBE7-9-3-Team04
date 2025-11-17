@@ -103,3 +103,7 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+kapt {
+    correctErrorTypes = true
+    includeCompileClasspath = false
+}
