@@ -29,7 +29,7 @@ class AiQuestionService(
     private val aiRequestHandler: AiRequestHandler
 
 ) {
-    @Throws(JsonProcessingException::class)
+
     fun createAiQuestion(userId: Long): AIQuestionCreateResponse {
         val user = userService.getUser(userId)
         // AI 질문 생성 횟수 제한 검증
@@ -50,14 +50,13 @@ class AiQuestionService(
     }
 
     @Transactional(readOnly = true)
-    @Throws(JsonProcessingException::class)
     fun getAiReviewContent(request: AiReviewbackRequest): String {
         val rawApiResponse = aiRequestHandler.connectionAi(request)
         return parseSingleContentFromResponse(rawApiResponse)
     }
 
     // AI 질문 생성 횟수 제한 검증
-    private fun validateQuestionLimit(user: User) {
+    fun validateQuestionLimit(user: User) {
         val availableCount = user.getAiQuestionLimit()
         val usedCount = user.aiQuestionUsedCount
 
@@ -67,7 +66,6 @@ class AiQuestionService(
         user.incrementAiQuestionUsedCount()
     }
 
-    @Throws(JsonProcessingException::class)
     fun parseChatGptResponse(connectionAi: String): List<AiQuestionResponse> {
         val responseDto = objectMapper.readValue(connectionAi, ChatGptResponse::class.java)
 
@@ -82,7 +80,7 @@ class AiQuestionService(
     }
 
 
-    @Throws(JsonProcessingException::class)
+
     fun parseSingleContentFromResponse(rawApiResponse: String): String {
         val responseDto = objectMapper.readValue(rawApiResponse, ChatGptResponse::class.java)
         return responseDto.choiceResponses.first().message.content

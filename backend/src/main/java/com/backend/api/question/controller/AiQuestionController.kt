@@ -22,9 +22,8 @@ class AiQuestionController(
     private val rq: Rq
 ) {
 
-    @PostMapping("")
+    @PostMapping
     @Operation(summary = "AI 면접 질문 생성", description = "AI 질문을 생성합니다.")
-    @Throws(JsonProcessingException::class)
     fun createAiQuestion(): ApiResponse<AIQuestionCreateResponse> {
         val userId = rq.getUser().id
         val responses = aiQuestionService.createAiQuestion(userId)
