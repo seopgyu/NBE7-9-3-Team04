@@ -1,11 +1,11 @@
 package com.backend.api.user.controller
 
-import com.backend.api.user.controller.testsupport.TestAuthExceptionHandler
 import com.backend.api.user.dto.response.UserMyPageResponse
 import com.backend.api.user.dto.request.MyPageRequest.UserModify
 import com.backend.api.user.service.UserMyPageService
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
+import com.backend.domain.user.repository.UserRepository
 import com.backend.global.Rq.Rq
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.transaction.Transactional
@@ -26,7 +26,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.mockito.kotlin.whenever
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
-import org.springframework.context.annotation.Import
 
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 
@@ -35,10 +34,10 @@ import org.springframework.context.annotation.Import
 @Transactional
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Import(TestAuthExceptionHandler::class)
 class MyPageControllerTest(
     private val mockMvc: MockMvc,
-    private val objectMapper: ObjectMapper) {
+    private val objectMapper: ObjectMapper,
+    private val userRepository: UserRepository) {
 
     @MockBean
     lateinit var userMyPageService: UserMyPageService
