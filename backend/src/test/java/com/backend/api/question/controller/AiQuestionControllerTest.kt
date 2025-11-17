@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
@@ -27,8 +28,8 @@ import java.util.*
 class AiQuestionControllerTest(
     private val mockMvc: MockMvc,
     private val questionRepository: QuestionRepository,
-    private var questionId: Long? = null,
-    private var groupId: UUID? = null
+    private var questionId: Long = 0,
+    private var groupId: UUID = UUID.randomUUID()
 ) : JwtTest() {
 
 
@@ -90,7 +91,7 @@ class AiQuestionControllerTest(
         @DisplayName("정상 작동")
         fun success() {
             //given
-            val question = questionRepository.findById(questionId!!).get()
+            val question = questionRepository.findByIdOrNull(questionId)
             val response =
                 questionRepository.getQuestionByCategoryTypeAndUserId(QuestionCategoryType.PORTFOLIO, mockUser)
 
@@ -144,7 +145,7 @@ class AiQuestionControllerTest(
         @DisplayName("정상 작동")
         fun success() {
             //given
-            val question = questionRepository.findById(questionId!!).get()
+            val question = questionRepository.findById(questionId).get()
             val response =
                 questionRepository.getQuestionByCategoryTypeAndUserId(QuestionCategoryType.PORTFOLIO, mockUser)
 

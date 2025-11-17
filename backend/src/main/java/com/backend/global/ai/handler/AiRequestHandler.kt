@@ -26,11 +26,11 @@ class AiRequestHandler(
         return mapper(chatClient)
     }
 
-    fun <T> connectionAi(request: T): String {
+    fun <T : Any> connectionAi(request: T): String {
         return restClient.post()
             .uri(apiUrl)
             .header("Authorization", "Bearer " + apiKey)
-            .body(request!!)
+            .body(request)
             .retrieve()
             .body(String::class.java)
             ?: throw ErrorException(ErrorCode.AI_SERVICE_ERROR)
