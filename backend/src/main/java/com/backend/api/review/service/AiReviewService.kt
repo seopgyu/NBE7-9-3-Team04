@@ -31,11 +31,11 @@ class AiReviewService(
         val request = AiReviewbackRequest.of(resume)
         val feedbackContent = aiQuestionService.getAiReviewContent(request)
 
-        val reviewEntity = Review.builder()
-            .user(user)
-            .resume(resume)
-            .AiReviewContent(feedbackContent)
-            .build()
+        val reviewEntity = Review(
+            user = user,
+            resume = resume,
+            AiReviewContent = feedbackContent
+        )
 
         reviewRepository.save(reviewEntity)
 
