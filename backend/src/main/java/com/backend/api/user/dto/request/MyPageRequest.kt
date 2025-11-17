@@ -2,7 +2,7 @@ package com.backend.api.user.dto.request
 
 import io.swagger.v3.oas.annotations.media.Schema
 
-class MyPageRequest(
+data class MyPageRequest(
     @field:Schema(description = "유저 아이디", example = "5")
     val userId: Long,
 

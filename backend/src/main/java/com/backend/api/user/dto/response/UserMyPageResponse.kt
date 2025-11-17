@@ -4,7 +4,7 @@ import com.backend.domain.user.entity.User
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
-class UserMyPageResponse(
+data class UserMyPageResponse(
     @field:Schema(description = "유저 아이디", example = "5")
     val userId: Long,
 
