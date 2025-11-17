@@ -1,17 +1,15 @@
 package com.backend.api.user.controller
 
+import com.backend.api.user.controller.testsupport.TestAuthExceptionHandler
 import com.backend.api.user.dto.response.UserMyPageResponse
-import com.backend.api.user.dto.response.UserMyPageResponse.UserModify
+import com.backend.api.user.dto.request.MyPageRequest.UserModify
 import com.backend.api.user.service.UserMyPageService
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
-import com.backend.domain.user.repository.UserRepository
 import com.backend.global.Rq.Rq
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.*
-import org.mockito.ArgumentMatchers
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -28,6 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.mockito.kotlin.whenever
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
+import org.springframework.context.annotation.Import
 
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 
@@ -36,10 +35,10 @@ import org.mockito.kotlin.eq
 @Transactional
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Import(TestAuthExceptionHandler::class)
 class MyPageControllerTest(
     private val mockMvc: MockMvc,
-    private val objectMapper: ObjectMapper,
-    private val userRepository: UserRepository) {
+    private val objectMapper: ObjectMapper) {
 
     @MockBean
     lateinit var userMyPageService: UserMyPageService
@@ -83,19 +82,18 @@ class MyPageControllerTest(
         }
 
         //비로그인 상태 오류 401 에러
-//        @Test
-//        @DisplayName("비로그인 상태")
-//        fun fail1() {
-//            //Mockito.`when`(rq.getUser()).thenReturn(null)
-//            userRepository.deleteAll()
-//
-//            mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me"))
-//                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("UNAUTHORIZED"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("로그인된 사용자가 없습니다."))
-//                .andDo(MockMvcResultHandlers.print())
-//        }
-//    }
+        @Test
+        @DisplayName("비로그인 상태")
+        fun fail1() {
+            Mockito.`when`(rq.getUser()).thenThrow(com.backend.api.user.controller.testsupport.UnauthenticatedException())
+
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("UNAUTHORIZED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("로그인된 사용자가 없습니다."))
+                .andDo(MockMvcResultHandlers.print())
+        }
+    }
 
     @Nested
     @DisplayName("개인정보 비밀번호 API")
@@ -154,10 +152,12 @@ class MyPageControllerTest(
 
             val response = UserMyPageResponse.fromEntity(user)
 
-            whenever(userMyPageService.modifyUser(
-                eq(user.id),
-                any<UserModify>()
-            )).thenReturn(response)
+            whenever(
+                userMyPageService.modifyUser(
+                    eq(user.id),
+                    any<UserModify>()
+                )
+            ).thenReturn(response)
 
             mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/v1/users/me")
