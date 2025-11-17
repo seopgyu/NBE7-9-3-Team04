@@ -1,6 +1,5 @@
 package com.backend.domain.question.entity
 
-import com.backend.domain.answer.entity.Answer
 import com.backend.domain.user.entity.User
 import com.backend.global.entity.BaseEntity
 import jakarta.persistence.*
@@ -30,25 +29,10 @@ open class Question(
     @Column(nullable = false)
     var categoryType: QuestionCategoryType,
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-    var answers: MutableList<Answer> = mutableListOf(),
-
     @Column(name = "group_id", columnDefinition = "BINARY(16)")
     var groupId: UUID? = null
 
 ) : BaseEntity() {
-
-    // JPA 기본 생성자
-    protected constructor() : this(
-        title = "",
-        content = "",
-        isApproved = false,
-        score = 0,
-        author = User(),
-        categoryType = QuestionCategoryType.DATABASE,
-        answers = mutableListOf(),
-        groupId = null
-    )
 
     fun updateApproved(isApproved: Boolean) {
         this.isApproved = isApproved

@@ -30,15 +30,6 @@ class Qna(
 
 ) : BaseEntity() {
 
-    protected constructor() : this(
-        title = "",
-        content = "",
-        author = User(),
-        categoryType = null,
-        adminAnswer = null,
-        isAnswered = false
-    )
-
     companion object {
         @JvmStatic
         fun builder() = Builder()

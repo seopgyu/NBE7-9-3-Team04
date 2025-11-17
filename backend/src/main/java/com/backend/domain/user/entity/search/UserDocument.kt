@@ -25,8 +25,6 @@ class UserDocument(
     var role: Role
 
 ) {
-    // JPA/ES 에 필요한 기본 생성자
-    protected constructor() : this("", "", "", "", Role.USER)
 
     companion object {
         // Kotlin 팩토리 메서드
