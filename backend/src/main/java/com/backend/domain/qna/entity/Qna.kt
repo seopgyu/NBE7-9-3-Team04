@@ -48,7 +48,7 @@ class Qna(
     class Builder {
         private var title: String = ""
         private var content: String = ""
-        private var author: User? = null
+        private var author: User = User()
         private var categoryType: QnaCategoryType? = null
 
         fun title(title: String) = apply { this.title = title }
