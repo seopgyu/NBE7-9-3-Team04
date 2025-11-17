@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface CommentRepository : JpaRepository<Comment?, Long?> {
+interface CommentRepository : JpaRepository<Comment, Long> {
     @EntityGraph(attributePaths = ["author", "post"])
     fun findByPostId(postId: Long, pageable: Pageable): Page<Comment>
 
