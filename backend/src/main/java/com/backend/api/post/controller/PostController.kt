@@ -32,7 +32,7 @@ class PostController(
         val response = postService.createPost(request, user)
 
         return ApiResponse.ok(
-            "${response.postId}번 게시글 등록을 완료했습니다.",
+            "게시글 등록을 완료했습니다.",
             response
         )
     }
@@ -58,7 +58,7 @@ class PostController(
         val response = postService.updatePost(postId, request, user)
 
         return ApiResponse.ok(
-            "${postId}번 게시글 수정을 완료했습니다.",
+            "게시글 수정을 완료했습니다.",
             response
         )
     }
