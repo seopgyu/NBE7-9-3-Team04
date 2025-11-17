@@ -4,11 +4,9 @@ import com.backend.domain.resume.entity.Resume
 import com.backend.domain.user.entity.User
 import com.backend.global.entity.BaseEntity
 import jakarta.persistence.*
-import lombok.AccessLevel
-import lombok.NoArgsConstructor
+
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 class Review(
 
     @Column(name = "ai_review_content", columnDefinition = "TEXT", nullable = false)

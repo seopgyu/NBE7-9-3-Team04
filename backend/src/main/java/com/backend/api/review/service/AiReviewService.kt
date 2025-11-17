@@ -9,7 +9,6 @@ import com.backend.domain.review.repository.ReviewRepository
 import com.backend.domain.user.entity.User
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
-import com.fasterxml.jackson.core.JsonProcessingException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -22,7 +21,6 @@ class AiReviewService(
 ) {
 
     @Transactional
-    @Throws(JsonProcessingException::class)
     fun createAiReview(user: User): AiReviewResponse {
 
         if (!user.isPremium()) {
