@@ -9,20 +9,20 @@ import jakarta.persistence.*
 @Entity
 class Resume(
     @Column(columnDefinition = "TEXT")
-    var content: String, // 이력서 내용
+    var content: String?, // 이력서 내용
 
-    var skill: String, // 기술 스택
-
-    @Column(columnDefinition = "TEXT")
-    var activity: String, // 대외 활동
+    var skill: String?, // 기술 스택
 
     @Column(columnDefinition = "TEXT")
-    var certification: String, // 자격증
+    var activity: String?, // 대외 활동
 
     @Column(columnDefinition = "TEXT")
-    var career: String, // 경력 사항
+    var certification: String?, // 자격증
 
-    var portfolioUrl: String, // 포트폴리오 URL
+    @Column(columnDefinition = "TEXT")
+    var career: String?, // 경력 사항
+
+    var portfolioUrl: String?, // 포트폴리오 URL
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
