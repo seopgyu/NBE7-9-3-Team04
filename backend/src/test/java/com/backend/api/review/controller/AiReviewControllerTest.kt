@@ -14,6 +14,8 @@ import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
 import com.backend.domain.user.repository.UserRepository
 import com.backend.global.Rq.Rq
+import com.backend.global.exception.ErrorCode
+import com.backend.global.exception.ErrorException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -145,8 +147,7 @@ class AiReviewControllerTest(
         fun createAiReview_Fail_Unauthorized() {
             // given
             SecurityContextHolder.clearContext()
-            Mockito.`when`(rq.getUser()).thenReturn(null)
-
+            Mockito.`when`(rq.getUser()).thenThrow(ErrorException(ErrorCode.UNAUTHORIZED_USER))
             // when
             val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/v1/portfolio-review")

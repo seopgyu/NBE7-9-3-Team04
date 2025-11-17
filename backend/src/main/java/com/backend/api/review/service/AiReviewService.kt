@@ -23,10 +23,7 @@ class AiReviewService(
 
     @Transactional
     @Throws(JsonProcessingException::class)
-    fun createAiReview(user: User?): AiReviewResponse {
-        if (user == null) {
-            throw ErrorException(ErrorCode.UNAUTHORIZED_USER)
-        }
+    fun createAiReview(user: User): AiReviewResponse {
 
         if (!user.isPremium()) {
             throw ErrorException(ErrorCode.AI_FEEDBACK_FOR_PREMIUM_ONLY)
@@ -48,11 +45,11 @@ class AiReviewService(
         return AiReviewResponse.of(reviewEntity.id, feedbackContent, reviewEntity.createDate)
     }
 
-    fun findReviewById(reviewId: Long, user: User?): AiReviewResponse {
+    fun findReviewById(reviewId: Long, user: User): AiReviewResponse {
         val review = reviewRepository.findById(reviewId)
             .orElseThrow { ErrorException(ErrorCode.NOT_FOUND_REVIEW) }
 
-        if (user == null || review.user?.id != user.id) {
+        if (review.user?.id != user.id) {
             throw ErrorException(ErrorCode.ACCESS_DENIED_REVIEW)
         }
 
@@ -68,7 +65,7 @@ class AiReviewService(
         val reviews: List<Review> = reviewRepository.findByUserIdOrderByIdDesc(user.id)
 
 
-        return reviews.stream()
+        return reviews
             .map { review ->
                 AiReviewResponse.of(
                     review.id,

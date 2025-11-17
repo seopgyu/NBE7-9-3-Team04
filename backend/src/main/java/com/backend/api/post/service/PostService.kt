@@ -29,11 +29,7 @@ class PostService(
     private val subscriptionRepository: SubscriptionRepository
 ) {
     @Transactional
-    fun createPost(request: PostAddRequest, user: User?): PostResponse {
-
-        if (user == null) {
-            throw ErrorException(ErrorCode.UNAUTHORIZED_USER) // 401
-        }
+    fun createPost(request: PostAddRequest, user: User): PostResponse {
 
         // 정지된 계정일 경우 처리
         if (!user.validateActiveStatus()) {

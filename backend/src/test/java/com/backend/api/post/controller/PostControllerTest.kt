@@ -19,6 +19,7 @@ import com.backend.domain.user.repository.UserRepository
 import com.backend.domain.userQuestion.repository.UserQuestionRepository
 import com.backend.global.Rq.Rq
 import com.backend.global.exception.ErrorCode
+import com.backend.global.exception.ErrorException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import jakarta.transaction.Transactional
@@ -157,7 +158,7 @@ class PostControllerTest(
         @DisplayName("실패 - 인증되지 않은 사용자(로그인 X)")
         fun fail1() {
             // given
-            Mockito.`when`(rq.getUser()).thenReturn(null)
+            Mockito.`when`(rq.getUser()).thenThrow(ErrorException(ErrorCode.UNAUTHORIZED_USER))
 
             val request = PostAddRequest(
                 "첫번째 게시물",
