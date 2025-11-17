@@ -42,7 +42,7 @@ import java.time.LocalDateTime
 class UserControllerTest(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
-    private val userRepository: UserRepository,
+    override var userRepository: UserRepository,
     private val jwtTokenProvider: JwtTokenProvider,
     private val verificationCodeRepository: VerificationCodeRepository,
     private val refreshRedisRepository: RefreshRedisRepository
@@ -145,7 +145,6 @@ class UserControllerTest(
         fun fail_notVerifiedEmail() {
             val email = "signup3@naver.com"
 
-            //TODO 빌더 제거
             //인증코드는 있지만 verified=false 인 상태
             verificationCodeRepository.save(
                 VerificationCode(
