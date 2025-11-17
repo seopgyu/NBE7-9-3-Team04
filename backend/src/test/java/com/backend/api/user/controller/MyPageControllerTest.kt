@@ -147,7 +147,6 @@ class MyPageControllerTest(
                 "github" to "newGithub",
                 "image" to "newImage"
             )
-
             val response = UserMyPageResponse.fromEntity(user)
 
             whenever(
