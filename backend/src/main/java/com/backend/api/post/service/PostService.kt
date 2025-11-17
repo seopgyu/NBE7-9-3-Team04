@@ -42,17 +42,17 @@ class PostService(
 
         validateDeadline(request.deadline)
 
-        val post = Post.builder()
-            .title(request.title)
-            .introduction(request.introduction)
-            .content(request.content)
-            .deadline(request.deadline)
-            .status(request.status)
-            .pinStatus(request.pinStatus)
-            .recruitCount(request.recruitCount)
-            .users(user)
-            .postCategoryType(request.categoryType)
-            .build()
+        val post = Post(
+            title = request.title,
+            introduction = request.introduction,
+            content = request.content,
+            deadline = request.deadline,
+            status = request.status,
+            pinStatus = request.pinStatus,
+            recruitCount = request.recruitCount,
+            users = user,
+            postCategoryType = request.categoryType
+        )
 
         val savedPost = postRepository.save(post)
 

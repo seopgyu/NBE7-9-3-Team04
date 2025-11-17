@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 data class PostAddRequest(
     @Schema(description = "게시글 제목", example = "스프링 부트 프로젝트 팀원 구합니다.")
     @field:NotBlank(message = "제목은 필수입니다.")
-    @field:Size(min = 2, max = 255, message = "제목은 2자 이상 255자 이하로 입력해주세요.")
+    @field:Size(max = 255, message = "제목은 2자 이상 255자 이하로 입력해주세요.")
     val title: String,
 
     @Schema(description = "게시글 내용", example = "백엔드 2명, 프론트엔드 2명 구합니다. 주제는...")
