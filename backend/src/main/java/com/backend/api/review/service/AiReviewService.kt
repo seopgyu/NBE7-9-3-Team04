@@ -26,7 +26,7 @@ class AiReviewService(
     fun createAiReview(user: User): AiReviewResponse {
 
         if (!user.isPremium()) {
-            throw ErrorException(ErrorCode.AI_FEEDBACK_FOR_PREMIUM_ONLY)
+            ErrorException(ErrorCode.AI_FEEDBACK_FOR_PREMIUM_ONLY)
         }
 
         val resume = resumeService.getResumeByUser(user)
@@ -50,7 +50,7 @@ class AiReviewService(
             .orElseThrow { ErrorException(ErrorCode.NOT_FOUND_REVIEW) }
 
         if (review.user?.id != user.id) {
-            throw ErrorException(ErrorCode.ACCESS_DENIED_REVIEW)
+            ErrorException(ErrorCode.ACCESS_DENIED_REVIEW)
         }
 
         return AiReviewResponse.of(review.id, review.AiReviewContent, review.createDate)
@@ -58,7 +58,7 @@ class AiReviewService(
 
     fun findMyAiReviews(user: User?): List<AiReviewResponse> {
         if (user == null) {
-            throw ErrorException(ErrorCode.UNAUTHORIZED_USER)
+         throw ErrorException(ErrorCode.UNAUTHORIZED_USER)
         }
 
 
