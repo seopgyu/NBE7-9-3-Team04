@@ -7,7 +7,6 @@ import com.backend.global.Rq.Rq
 import com.backend.global.dto.response.ApiResponse
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
-import com.fasterxml.jackson.core.JsonProcessingException
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
@@ -25,7 +24,6 @@ class AiReviewController(
 
     @PostMapping
     @Operation(summary = "포트폴리오 AI 첨삭 생성", description = "사용자의 포트폴리오를 바탕으로 AI 첨삭을 생성합니다.")
-    @Throws(JsonProcessingException::class)
     fun createResumeFeedback(): ApiResponse<AiReviewResponse> {
         val user = currentUser
         val response = aiReviewService.createAiReview(user)
