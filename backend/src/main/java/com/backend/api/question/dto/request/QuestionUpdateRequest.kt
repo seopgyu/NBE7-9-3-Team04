@@ -15,5 +15,5 @@ data class QuestionUpdateRequest(
     val content: String,
 
     @field:Schema(description = "수정할 카테고리 타입", example = "SPRING")
-    val categoryType: QuestionCategoryType?
+    val categoryType: QuestionCategoryType
 )

@@ -33,11 +33,10 @@ class QuestionService(
     private val rq: Rq
 ) {
 
-    // 권한 검증 후 반환
-    private fun requireUser(user: User?): User {
-        val u = user ?: throw ErrorException(ErrorCode.UNAUTHORIZED_USER)
-        if (u.role != Role.USER) throw ErrorException(ErrorCode.FORBIDDEN)
-        return u
+    // 권한 검증
+    private fun requireUser(user: User): User {
+        if (user.role != Role.USER) throw ErrorException(ErrorCode.FORBIDDEN)
+        return user
     }
 
     fun findByIdOrThrow(questionId: Long): Question =
@@ -51,13 +50,13 @@ class QuestionService(
     }
 
     private fun validateApprovedQuestion(question: Question) {
-        if (question.isApproved != true) {
+        if (!question.isApproved) {
             throw ErrorException(ErrorCode.QUESTION_NOT_APPROVED)
         }
     }
 
     @Transactional
-    fun addQuestion(@Valid request: QuestionAddRequest, user: User?): QuestionResponse {
+    fun addQuestion(@Valid request: QuestionAddRequest, user: User): QuestionResponse {
         val u = requireUser(user)
 
         val question = Question(
@@ -72,7 +71,7 @@ class QuestionService(
     }
 
     @Transactional
-    fun updateQuestion(questionId: Long, @Valid request: QuestionUpdateRequest, user: User?): QuestionResponse {
+    fun updateQuestion(questionId: Long, @Valid request: QuestionUpdateRequest, user: User): QuestionResponse {
         val u = requireUser(user)
 
         val question = findByIdOrThrow(questionId)
@@ -89,15 +88,20 @@ class QuestionService(
 
     fun getApprovedQuestions(page: Int, categoryType: QuestionCategoryType?): QuestionPageResponse<QuestionResponse> {
         val pageNum = maxOf(page, 1)
-
         val pageable: Pageable = PageRequest.of(pageNum - 1, 9, Sort.by("createDate").descending())
 
         val questionsPage: Page<Question> = when (categoryType) {
             null ->
-                questionRepository.findApprovedQuestionsExcludingCategory(QuestionCategoryType.PORTFOLIO, pageable)
+                questionRepository.findApprovedQuestionsExcludingCategory(
+                    QuestionCategoryType.PORTFOLIO,
+                    pageable
+                )
 
             QuestionCategoryType.PORTFOLIO ->
-                questionRepository.findApprovedQuestionsByCategory(QuestionCategoryType.PORTFOLIO, pageable)
+                questionRepository.findApprovedQuestionsByCategory(
+                    QuestionCategoryType.PORTFOLIO,
+                    pageable
+                )
 
             else ->
                 questionRepository.findByCategoryTypeAndIsApprovedTrue(categoryType, pageable)
@@ -106,7 +110,6 @@ class QuestionService(
         if (questionsPage.isEmpty) throw ErrorException(ErrorCode.NOT_FOUND_QUESTION)
 
         val responses = questionsPage.content.map { QuestionResponse.from(it) }
-
         return QuestionPageResponse.from(questionsPage, responses)
     }
 
@@ -116,7 +119,7 @@ class QuestionService(
         return QuestionResponse.from(question)
     }
 
-    fun getNotApprovedQuestionById(userId: Long, questionId: Long, user: User?): QuestionResponse {
+    fun getNotApprovedQuestionById(userId: Long, questionId: Long, user: User): QuestionResponse {
         val u = requireUser(user)
 
         if (u.id != userId) throw ErrorException(ErrorCode.QUESTION_INVALID_USER)
@@ -124,7 +127,7 @@ class QuestionService(
         val question = findByIdOrThrow(questionId)
         validateQuestionAuthor(question, u)
 
-        if (question.isApproved == true) {
+        if (question.isApproved) {
             throw ErrorException(ErrorCode.ALREADY_APPROVED_QUESTION)
         }
 
@@ -144,7 +147,7 @@ class QuestionService(
         questionRepository.getByUserAndGroupId(user, groupId)
             ?: throw ErrorException(ErrorCode.NOT_FOUND_QUESTION)
 
-    fun countByUser(user: User?): Int {
+    fun countByUser(user: User): Int {
         val u = requireUser(user)
         return questionRepository.countByAuthor(u)
     }
@@ -152,7 +155,7 @@ class QuestionService(
     fun findQuestionsByUserId(page: Int, userId: Long): QuestionPageResponse<QuestionResponse> {
         userService.getUser(userId) // 존재 확인
 
-        val current = rq.getUser()
+        val current = rq.getUser() // 이미 절대 non-null 로 설계되어 있음
 
         // 본인이거나 관리자만 가능
         if (current.id != userId && current.role != Role.ADMIN) {

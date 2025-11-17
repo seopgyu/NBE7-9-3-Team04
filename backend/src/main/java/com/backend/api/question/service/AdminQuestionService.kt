@@ -27,10 +27,9 @@ class AdminQuestionService(
 ) {
 
     // 관리자 권한 검증
-    private fun requireAdmin(user: User?): User {
-        val u = user ?: throw ErrorException(ErrorCode.UNAUTHORIZED_USER)
-        if (u.role != Role.ADMIN) throw ErrorException(ErrorCode.FORBIDDEN)
-        return u
+    private fun requireAdmin(user: User): User {
+        if (user.role != Role.ADMIN) throw ErrorException(ErrorCode.FORBIDDEN)
+        return user
     }
 
     // ID로 질문 조회
@@ -40,7 +39,7 @@ class AdminQuestionService(
 
     // 관리자 질문 생성
     @Transactional
-    fun addQuestion(@Valid request: AdminQuestionAddRequest, user: User?): QuestionResponse {
+    fun addQuestion(@Valid request: AdminQuestionAddRequest, user: User): QuestionResponse {
         val admin = requireAdmin(user)
 
         val question = Question(
@@ -59,7 +58,11 @@ class AdminQuestionService(
 
     // 관리자 질문 수정
     @Transactional
-    fun updateQuestion(questionId: Long, @Valid request: AdminQuestionUpdateRequest, user: User?): QuestionResponse {
+    fun updateQuestion(
+        questionId: Long,
+        @Valid request: AdminQuestionUpdateRequest,
+        user: User
+    ): QuestionResponse {
         requireAdmin(user)
 
         val question = findByIdOrThrow(questionId)
@@ -77,7 +80,7 @@ class AdminQuestionService(
 
     // 승인/비승인 처리
     @Transactional
-    fun approveQuestion(questionId: Long, isApproved: Boolean, user: User?): QuestionResponse {
+    fun approveQuestion(questionId: Long, isApproved: Boolean, user: User): QuestionResponse {
         requireAdmin(user)
 
         val question = findByIdOrThrow(questionId)
@@ -88,7 +91,7 @@ class AdminQuestionService(
 
     // 점수 수정
     @Transactional
-    fun setQuestionScore(questionId: Long, score: Int?, user: User?): QuestionResponse {
+    fun setQuestionScore(questionId: Long, score: Int?, user: User): QuestionResponse {
         requireAdmin(user)
 
         val question = findByIdOrThrow(questionId)
@@ -98,7 +101,7 @@ class AdminQuestionService(
     }
 
     // 관리자 질문 전체 조회
-    fun getAllQuestions(page: Int, user: User?): QuestionPageResponse<QuestionResponse> {
+    fun getAllQuestions(page: Int, user: User): QuestionPageResponse<QuestionResponse> {
         requireAdmin(user)
 
         val pageNum = maxOf(page, 1)
@@ -114,7 +117,7 @@ class AdminQuestionService(
     }
 
     // 관리자 질문 단건 조회
-    fun getQuestionById(questionId: Long, user: User?): QuestionResponse {
+    fun getQuestionById(questionId: Long, user: User): QuestionResponse {
         requireAdmin(user)
 
         val question = findByIdOrThrow(questionId)
@@ -123,7 +126,7 @@ class AdminQuestionService(
 
     // 관리자 질문 삭제
     @Transactional
-    fun deleteQuestion(questionId: Long, user: User?) {
+    fun deleteQuestion(questionId: Long, user: User) {
         requireAdmin(user)
 
         val question = findByIdOrThrow(questionId)

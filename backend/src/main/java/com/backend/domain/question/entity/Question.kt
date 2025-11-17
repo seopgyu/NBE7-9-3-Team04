@@ -27,8 +27,8 @@ open class Question(
     var author: User,
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
-    var categoryType: QuestionCategoryType? = null,
+    @Column(nullable = false)
+    var categoryType: QuestionCategoryType,
 
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
     var answers: MutableList<Answer> = mutableListOf(),
@@ -45,7 +45,7 @@ open class Question(
         isApproved = false,
         score = 0,
         author = User(),
-        categoryType = null,
+        categoryType = QuestionCategoryType.DATABASE,
         answers = mutableListOf(),
         groupId = null
     )
@@ -58,7 +58,7 @@ open class Question(
         this.score = newScore
     }
 
-    fun updateUserQuestion(title: String, content: String, categoryType: QuestionCategoryType?) {
+    fun updateUserQuestion(title: String, content: String, categoryType: QuestionCategoryType) {
         this.title = title
         this.content = content
         this.categoryType = categoryType
@@ -69,7 +69,7 @@ open class Question(
         content: String,
         isApproved: Boolean,
         score: Int?,
-        categoryType: QuestionCategoryType?
+        categoryType: QuestionCategoryType
     ) {
         this.title = title
         this.content = content
@@ -78,17 +78,16 @@ open class Question(
         this.categoryType = categoryType
     }
 
-    fun changeCategory(categoryType: QuestionCategoryType?) {
+    fun changeCategory(categoryType: QuestionCategoryType) {
         this.categoryType = categoryType
     }
 
-    // 임시 빌더
-
+    // Builder
     class Builder {
         private var title: String = ""
         private var content: String = ""
-        private var author: User? = null
-        private var categoryType: QuestionCategoryType? = null
+        private var author: User = User()
+        private var categoryType: QuestionCategoryType = QuestionCategoryType.DATABASE
         private var isApproved: Boolean = false
         private var score: Int = 0
         private var groupId: UUID? = null
@@ -96,7 +95,7 @@ open class Question(
         fun title(title: String) = apply { this.title = title }
         fun content(content: String) = apply { this.content = content }
         fun author(author: User) = apply { this.author = author }
-        fun categoryType(categoryType: QuestionCategoryType?) = apply { this.categoryType = categoryType }
+        fun categoryType(categoryType: QuestionCategoryType) = apply { this.categoryType = categoryType }
         fun isApproved(isApproved: Boolean) = apply { this.isApproved = isApproved }
         fun score(score: Int) = apply { this.score = score }
         fun groupId(groupId: UUID) = apply { this.groupId = groupId }
@@ -107,9 +106,9 @@ open class Question(
                 content = content,
                 isApproved = isApproved,
                 score = score,
-                author = author ?: throw IllegalArgumentException("author must not be null"),
-                groupId = groupId,
-                categoryType = categoryType
+                author = author,
+                categoryType = categoryType,
+                groupId = groupId
             )
         }
     }
