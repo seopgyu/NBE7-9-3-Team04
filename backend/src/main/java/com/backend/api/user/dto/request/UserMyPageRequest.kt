@@ -1,10 +1,8 @@
-package com.backend.api.user.dto.response
+package com.backend.api.user.dto.request
 
-import com.backend.domain.user.entity.User
 import io.swagger.v3.oas.annotations.media.Schema
-import java.time.LocalDateTime
 
-data class UserMyPageResponse(
+data class MyPageRequest(
     @field:Schema(description = "유저 아이디", example = "5")
     val userId: Long,
 
@@ -26,22 +24,13 @@ data class UserMyPageResponse(
     @field:Schema(description = "이미지 주소", example = "image3")
     val image: String?
 ) {
-
-    class SolvedProblem(
-        val title: String,// 문제 제목
-        val modifyDate: LocalDateTime?// 수정일
+    class UserModify(
+        val email: String?,
+        val password: String?,
+        val name: String?,
+        val nickname: String?,
+        val age: Int?,
+        val github: String?,
+        val image: String?
     )
-
-    companion object {
-        fun fromEntity(user: User): UserMyPageResponse =
-            UserMyPageResponse(
-                userId = user.id,
-                email = user.email,
-                name = user.name,
-                nickname = user.nickname,
-                age = user.age,
-                github = user.github,
-                image = user.image
-            )
-    }
 }
