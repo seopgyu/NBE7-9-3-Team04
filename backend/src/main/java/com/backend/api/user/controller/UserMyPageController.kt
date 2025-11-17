@@ -137,7 +137,6 @@ class UserMyPageController (
     @Operation(summary = "비밀번호 확인")
     fun verifyPassword(@RequestBody requestBody: Map<String, String>): ApiResponse<Boolean> {
         val userId = currentUser().id
-        //val inputPassword = requestBody.get("password")
         val inputPassword = requestBody["password"]
         val isValid = userMyPageService.verifyPassword(userId, inputPassword)
 
