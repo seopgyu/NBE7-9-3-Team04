@@ -1,44 +1,38 @@
-package com.backend.global.dto.response;
+package com.backend.global.dto.response
 
-import com.backend.global.exception.ErrorCode;
-import com.backend.global.exception.ErrorException;
-import org.springframework.http.HttpStatus;
+import com.backend.global.exception.ErrorException
+import org.springframework.http.HttpStatus
 
-public record ApiResponse<T>(
-        HttpStatus status,
-        String message,
-        T data
+
+data class ApiResponse<T>(
+    val status: HttpStatus,
+    val message: String,
+    val data: T?
 ) {
-    public static <T> ApiResponse<T> ok( String message, T data) {
-        return new ApiResponse<>(HttpStatus.OK, message, data);
-    }
+    companion object {
+        fun <T> ok(message: String, data: T?): ApiResponse<T> {
+            return ApiResponse(HttpStatus.OK, message, data)
+        }
 
-    public static <T> ApiResponse<T> ok(T data) {
-        return ok("유저 정보를 불러왔습니다.", data);
-    }
+        fun <T> created(message: String, data: T?): ApiResponse<T> = ApiResponse(HttpStatus.CREATED, message, data)
 
-    public static <T> ApiResponse<T> created( String message, T data) {
-        return new ApiResponse<>(HttpStatus.CREATED, message, data);
-    }
+        fun <T> noContent(message: String): ApiResponse<T> = ApiResponse(HttpStatus.NO_CONTENT, message, null)
 
-    public static <T> ApiResponse<T> noContent( String message) {
-        return new ApiResponse<>(HttpStatus.NO_CONTENT, message, null);
-    }
-
-    public static ApiResponse<?> fail(ErrorException errorException) {
-        ErrorCode errorCode = errorException.getErrorCode();
-        return new ApiResponse<>(
-                errorCode.getHttpStatus(),
-                errorCode.getMessage(),
+        fun <T> fail(errorException: ErrorException): ApiResponse<T> {
+            val errorCode = errorException.errorCode
+            return ApiResponse(
+                errorCode.httpStatus,
+                errorCode.message,
                 null
-        );
-    }
+            )
+        }
 
-    public static ApiResponse<?> fail(HttpStatus status, String message) {
-        return new ApiResponse<>(
+        fun <T> fail(status: HttpStatus, message: String): ApiResponse<T> {
+            return ApiResponse(
                 status,
                 message,
                 null
-        );
+            )
+        }
     }
 }
