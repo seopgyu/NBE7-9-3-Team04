@@ -24,7 +24,7 @@ class AiReviewService(
     fun createAiReview(user: User): AiReviewResponse {
 
         if (!user.isPremium()) {
-            ErrorException(ErrorCode.AI_FEEDBACK_FOR_PREMIUM_ONLY)
+            throw ErrorException(ErrorCode.AI_FEEDBACK_FOR_PREMIUM_ONLY)
         }
 
         val resume = resumeService.getResumeByUser(user)
