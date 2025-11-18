@@ -109,12 +109,12 @@ class AiReviewControllerTest(
     }
 
     private fun createAndSaveReview(content: String): Review {
-        return reviewRepository.save(
-            Review.builder()
-                .AiReviewContent(content)
-                .user(testUser)
-                .build()
+        val review = Review(
+            AiReviewContent = content,
+            user = testUser,
+            resume = null
         )
+        return reviewRepository.save(review)
     }
 
     @Nested
