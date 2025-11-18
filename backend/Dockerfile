@@ -1,6 +1,7 @@
 # 1단계: 빌드(Build) 환경
-# Gradle 8.5와 Java 17 (Amazon Corretto)을 사용해 앱을 빌드합니다.
-FROM gradle:8.5.0-jdk17-jammy AS build
+# Gradle 8.5와 Java 21 (Amazon Corretto)을 사용해 앱을 빌드합니다.
+# (기존) gradle:8.5.0-jdk17-jammy
+FROM gradle:8.5.0-jdk21-jammy AS build
 
 # 작업 디렉터리를 /app/backend로 설정합니다.
 WORKDIR /app/backend
@@ -11,13 +12,14 @@ COPY . .
 # Gradle 실행 권한을 부여합니다.
 RUN chmod +x ./gradlew
 
-# Gradle을 사용해 테스트를 건너뛰고, *상세 로그*와 함께 빌드합니다.
+# Gradle을 사용해 테스트를 건너뛰고 빌드합니다.
 RUN ./gradlew build -x test --info --stacktrace
 
 
 # 2단계: 실행(Runtime) 환경
 # 빌드된 .jar 파일을 실행할 가벼운 이미지를 사용합니다.
-FROM amazoncorretto:17-alpine
+# (기존) amazoncorretto:17-alpine
+FROM amazoncorretto:21-alpine
 
 # 작업 디렉터리를 /app으로 설정합니다.
 WORKDIR /app
