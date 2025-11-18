@@ -25,7 +25,7 @@ RUN ./gradlew build -x test
 
 # 2단계: 실행(Runtime) 환경
 # 빌드된 .jar 파일을 실행할 가벼운 JRE(Java 실행 환경) 이미지를 사용합니다.
-FROM amazoncorretto:17-alpine-jre
+FROM amazoncorretto:17-alpine
 
 # 작업 디렉터리를 /app으로 설정합니다.
 WORKDIR /app
