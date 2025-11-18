@@ -8,11 +8,11 @@ WORKDIR /app/backend
 # 모든 파일을 복사합니다 (빌드 파일 + 소스 코드)
 COPY . .
 
-# Gradle 실행 권한을 부여합니다. (빌드 실행 *직전*에 실행)
+# Gradle 실행 권한을 부여합니다.
 RUN chmod +x ./gradlew
 
-# Gradle을 사용해 테스트를 건너뛰고 빌드합니다.
-RUN ./gradlew build -x test
+# Gradle을 사용해 테스트를 건너뛰고, *상세 로그*와 함께 빌드합니다.
+RUN ./gradlew build -x test --info --stacktrace
 
 
 # 2단계: 실행(Runtime) 환경
@@ -23,7 +23,7 @@ FROM amazoncorretto:17-alpine
 WORKDIR /app
 
 # 1단계(build)에서 생성된 .jar 파일을 복사해옵니다.
-COPY --from=build /app/backend/build/libs/*.jar app.jar
+COPY --from-build /app/backend/build/libs/*.jar app.jar
 
 # Spring Boot 앱은 기본적으로 8080 포트를 사용합니다.
 EXPOSE 8080
