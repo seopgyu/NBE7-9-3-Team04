@@ -23,7 +23,7 @@ FROM amazoncorretto:17-alpine
 WORKDIR /app
 
 # 1단계(build)에서 생성된 .jar 파일을 복사해옵니다.
-COPY --from-build /app/backend/build/libs/*.jar app.jar
+COPY --from=build /app/backend/build/libs/*.jar app.jar
 
 # Spring Boot 앱은 기본적으로 8080 포트를 사용합니다.
 EXPOSE 8080
