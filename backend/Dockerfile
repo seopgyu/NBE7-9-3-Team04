@@ -5,13 +5,11 @@ FROM gradle:8.5.0-jdk17-jammy AS build
 # 작업 디렉터리를 /app/backend로 설정합니다.
 WORKDIR /app/backend
 
-# Gradle 실행 권한 부여
-COPY gradlew ./
-COPY gradle ./gradle
-RUN chmod +x ./gradlew
-
 # 모든 파일을 복사합니다 (빌드 파일 + 소스 코드)
 COPY . .
+
+# Gradle 실행 권한을 부여합니다. (빌드 실행 *직전*에 실행)
+RUN chmod +x ./gradlew
 
 # Gradle을 사용해 테스트를 건너뛰고 빌드합니다.
 RUN ./gradlew build -x test
